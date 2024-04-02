@@ -1,2 +1,2 @@
 # hypergraphs
-C# librari
+C# library
