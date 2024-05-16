@@ -590,7 +590,7 @@
             var prev_i = 0;
             var prev_j = 0;
 
-            while (i < verticles)
+            while (i < verticles / 2)
             {
                 var prev = 0;
                 for (var temp = j; temp > i; temp--)
@@ -601,7 +601,7 @@
                     }
                     else if (adjacencyMatrix[i, temp] == 0)
                     {
-                        j = temp;
+                        j = -1;
                     }
 
                     prev = adjacencyMatrix[i, temp];
