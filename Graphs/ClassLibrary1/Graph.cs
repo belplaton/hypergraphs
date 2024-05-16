@@ -7,8 +7,14 @@
 
         public static bool CheckVectorGraphical(in int[] degreeVector)
         {
+            return (CheckVectorGraphical(degreeVector, out var _));
+        }
+
+        public static bool CheckVectorGraphical(in int[] degreeVector, out string errmes)
+        {
             if (degreeVector == null)
             {
+                errmes = "degreeVector is null";
                 return false;
             }
 
@@ -16,6 +22,7 @@
             var degreeVectorSum = tempDegreeVector.Sum();
             if (degreeVectorSum % 2 != 0)
             {
+                errmes = $"Sum {degreeVectorSum} % 2 != 0";
                 return false;
             }
 
@@ -23,6 +30,7 @@
             {
                 if (tempDegreeVector[i] >= tempDegreeVector.Length)
                 {
+                    errmes = $"degreeVector[{i}] >= {tempDegreeVector.Length}";
                     return false;
                 }
             }
@@ -42,11 +50,13 @@
 
                     if (tempDegreeVector[i] > 0)
                     {
+                        errmes = $"Not Enough connections: degreeVector[{i}] > 0";
                         return false;
                     }
                 }
             }
 
+            errmes = string.Empty;
             return true;
         }
 
@@ -75,9 +85,40 @@
             return CheckVectorGraphical(degreeVector);
         }
 
+        public static bool CheckAdjacencyGraphical(in int[,] adjacencyMatrix, out string errmes)
+        {
+            var degreeVector = new int[adjacencyMatrix.Length];
+
+            for (int i = 0; i < adjacencyMatrix.Length; i++)
+            {
+                var degree = 0;
+                for (int j = 0; j < adjacencyMatrix.Length; j++)
+                {
+                    if (adjacencyMatrix[i, j] == 1)
+                    {
+                        degree++;
+                    }
+                    else if (adjacencyMatrix[i, j] > 1)
+                    {
+                        errmes = $"adjacencyMatrix[{i}, {j}] > 1";
+                        return false;
+                    }
+
+                    degreeVector[i] = degree;
+                }
+            }
+
+            return CheckVectorGraphical(degreeVector, out errmes);
+        }
+
         public static bool CheckIncidenceGraphical(in int[,] incidenceMatrix)
         {
             return TryIncidenceToVector(incidenceMatrix, out var _);
+        }
+
+        public static bool CheckIncidenceGraphical(in int[,] incidenceMatrix, out string errmes)
+        {
+            return TryIncidenceToVector(incidenceMatrix, out var _, out errmes);
         }
 
         #endregion
@@ -86,9 +127,15 @@
 
         public static bool TryVectorToAdjacency(in int[] degreeVector, out int[,] adjacencyMatrix)
         {
+            return TryVectorToAdjacency(degreeVector, out adjacencyMatrix, out var _);
+        }
+
+        public static bool TryVectorToAdjacency(in int[] degreeVector, out int[,] adjacencyMatrix, out string errmes)
+        {
             if (degreeVector == null)
             {
                 adjacencyMatrix = new int[0, 0];
+                errmes = "degreeVector is null";
                 return false;
             }
 
@@ -97,6 +144,7 @@
             if (tempDegreeVector.Sum() % 2 != 0)
             {
                 adjacencyMatrix = new int[0, 0];
+                errmes = $"Sum {tempDegreeVector.Sum()} % 2 != 0";
                 return false;
             }
 
@@ -110,6 +158,7 @@
                     if (tempDegreeVector[i] >= vertices)
                     {
                         adjacencyMatrix = new int[0, 0];
+                        errmes = $"degreeVector[{i}] >= {tempDegreeVector.Length}";
                         return false;
                     }
 
@@ -127,19 +176,27 @@
                     if (tempDegreeVector[i] > 0)
                     {
                         adjacencyMatrix = new int[0, 0];
+                        errmes = $"Not Enough connections: degreeVector[{i}] > 0";
                         return false;
                     }
                 }
             }
 
+            errmes = string.Empty;
             return true;
         }
 
         public static bool TryAdjacencyToVector(in int[,] adjacencyMatrix, out int[] degreeVector)
         {
+            return TryAdjacencyToVector(adjacencyMatrix, out degreeVector);
+        }
+
+        public static bool TryAdjacencyToVector(in int[,] adjacencyMatrix, out int[] degreeVector, out string errmes)
+        {
             if (adjacencyMatrix == null)
             {
                 degreeVector = new int[0];
+                errmes = "adjacencyMatrix is null";
                 return false;
             }
 
@@ -158,6 +215,7 @@
                     else if (adjacencyMatrix[i, j] > 1)
                     {
                         degreeVector = new int[0];
+                        errmes = $"adjacencyMatrix[{i}, {j}] > 1";
                         return false;
                     }
 
@@ -168,22 +226,30 @@
             if (degreeVector.Sum() % 2 != 0)
             {
                 degreeVector = new int[0];
+                errmes = $"Sum {degreeVector.Sum()} % 2 != 0";
                 return false;
             }
 
+            errmes = string.Empty;
             return true;
         }
 
         public static bool TryAdjacencyToIncidence(in int[,] adjacencyMatrix, out int[,] incidenceMatrix)
         {
+            return TryAdjacencyToIncidence(adjacencyMatrix, out incidenceMatrix, out var _);
+        }
+
+        public static bool TryAdjacencyToIncidence(in int[,] adjacencyMatrix, out int[,] incidenceMatrix, out string errmes)
+        {
             if (adjacencyMatrix == null)
             {
                 incidenceMatrix = new int[0, 0];
+                errmes = "adjancencyMatrix is null";
                 return false;
             }
 
             var vertices = adjacencyMatrix.GetLength(0);
-            if (TryAdjacencyToVector(adjacencyMatrix, out var degreeVector))
+            if (TryAdjacencyToVector(adjacencyMatrix, out var degreeVector, out errmes))
             {
                 var edges = degreeVector.Sum() / 2;
 
@@ -212,13 +278,19 @@
 
         public static bool TryVectorToIncidence(in int[] degreeVector, out int[,] incidenceMatrix)
         {
+            return TryVectorToIncidence(degreeVector, out incidenceMatrix, out var _);
+        }
+
+        public static bool TryVectorToIncidence(in int[] degreeVector, out int[,] incidenceMatrix, out string errmes)
+        {
             if (degreeVector == null)
             {
                 incidenceMatrix = new int[0, 0];
+                errmes = "degreeVector is null";
                 return false;
             }
 
-            if (TryVectorToAdjacency(degreeVector, out var adjacencyMatrix))
+            if (TryVectorToAdjacency(degreeVector, out var adjacencyMatrix, out errmes))
             {
                 var vertices = adjacencyMatrix.GetLength(0);
                 var edges = degreeVector.Sum() / 2;
@@ -248,9 +320,15 @@
 
         public static bool TryIncidenceToVector(in int[,] incidenceMatrix, out int[] degreeVector)
         {
+            return TryIncidenceToVector(incidenceMatrix, out degreeVector, out var _);
+        }
+
+        public static bool TryIncidenceToVector(in int[,] incidenceMatrix, out int[] degreeVector, out string errmes)
+        {
             if (incidenceMatrix == null)
             {
                 degreeVector = new int[0];
+                errmes = "incidenceMatrix is null";
                 return false;
             }
 
@@ -270,7 +348,7 @@
                 }
             }
 
-            if (!CheckVectorGraphical(degreeVector))
+            if (!CheckVectorGraphical(degreeVector, out errmes))
             {
                 degreeVector = new int[0];
                 return false;
@@ -281,19 +359,25 @@
 
         public static bool TryIncidenceToAdjacency(in int[,] incidenceMatrix, out int[,] adjacencyMatrix)
         {
+            return TryIncidenceToAdjacency(incidenceMatrix, out adjacencyMatrix, out var _);
+        }
+
+        public static bool TryIncidenceToAdjacency(in int[,] incidenceMatrix, out int[,] adjacencyMatrix, out string errmes)
+        {
             if (incidenceMatrix == null)
             {
                 adjacencyMatrix = new int[0, 0];
+                errmes = "incidenceMatrix is null";
                 return false;
             }
 
-            if (!TryIncidenceToVector(incidenceMatrix, out var degreeVector))
+            if (!TryIncidenceToVector(incidenceMatrix, out var degreeVector, out errmes))
             {
                 adjacencyMatrix = new int[0, 0];
                 return false;
             }
 
-            if (!TryVectorToAdjacency(degreeVector, out adjacencyMatrix))
+            if (!TryVectorToAdjacency(degreeVector, out adjacencyMatrix, out errmes))
             {
                 return false;
             }
