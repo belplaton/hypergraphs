@@ -4,12 +4,12 @@
     {
         public static int[,] VectorToAdjacency(in int[] degreeVector)
         {
-            var tempDegreeVector = degreeVector.ToArray();
-
-            if (tempDegreeVector == null)
+            if (degreeVector == null)
             {
-                throw new ArgumentNullException(nameof(tempDegreeVector));
+                throw new ArgumentNullException(nameof(degreeVector));
             }
+
+            var tempDegreeVector = degreeVector.ToArray();
 
             if (tempDegreeVector.Sum() % 2 != 0)
             {
@@ -54,6 +54,11 @@
 
         public static int[] AdjacencyToVector(in int[,] adjacencyMatrix)
         {
+            if (adjacencyMatrix == null)
+            {
+                throw new ArgumentNullException(nameof(adjacencyMatrix));
+            }
+
             var vertices = adjacencyMatrix.GetLength(0);
             var degreeVector = new int[vertices];
             
@@ -76,6 +81,11 @@
 
         public static int[,] AdjacencyToIncidence(in int[,] adjacencyMatrix)
         {
+            if (adjacencyMatrix == null)
+            {
+                throw new ArgumentNullException(nameof(adjacencyMatrix));
+            }
+
             var vertices = adjacencyMatrix.GetLength(0);
             var edges = AdjacencyToVector(adjacencyMatrix).Sum() / 2;
 
@@ -100,6 +110,11 @@
 
         public static int[,] VectorToIncidence(in int[] degreeVector)
         {
+            if (degreeVector == null)
+            {
+                throw new ArgumentNullException(nameof(degreeVector));
+            }
+
             var tempDegreeVector = degreeVector.ToArray();
             var adjacencyMatrix = VectorToAdjacency(tempDegreeVector);
 
@@ -127,6 +142,11 @@
 
         public static int[,] IncidenceToAdjacency(int[,] incidenceMatrix)
         {
+            if (incidenceMatrix == null)
+            {
+                throw new ArgumentNullException(nameof(incidenceMatrix));
+            }
+
             int vertices = incidenceMatrix.GetLength(0);
             int edges = incidenceMatrix.GetLength(1);
 
@@ -165,6 +185,11 @@
 
         public static int[] IncidenceToVector(int[,] incidenceMatrix)
         {
+            if (incidenceMatrix == null)
+            {
+                throw new ArgumentNullException(nameof(incidenceMatrix));
+            }
+
             int vertices = incidenceMatrix.GetLength(0);
             int edges = incidenceMatrix.GetLength(1);
 
