@@ -2,10 +2,7 @@
 {
     public class Graph
     {
-        public bool CheckGraphical()
-        {
 
-        }
 
         public static int[,] VectorToAdjacency(in int[] degreeVector)
         {
@@ -158,38 +155,8 @@
                 throw new ArgumentNullException(nameof(incidenceMatrix));
             }
 
-            int vertices = incidenceMatrix.GetLength(0);
-            int edges = incidenceMatrix.GetLength(1);
-
-            int[,] adjacencyMatrix = new int[vertices, vertices];
-
-            for (int k = 0; k < edges; k++)
-            {
-                int vertex1 = -1;
-                int vertex2 = -1;
-
-                for (int i = 0; i < vertices; i++)
-                {
-                    if (incidenceMatrix[i, k] == 1)
-                    {
-                        if (vertex1 == -1)
-                        {
-                            vertex1 = i;
-                        }
-                        else
-                        {
-                            vertex2 = i;
-                            break;
-                        }
-                    }
-                }
-
-                if (vertex1 != -1 && vertex2 != -1)
-                {
-                    adjacencyMatrix[vertex1, vertex2] = 1;
-                    adjacencyMatrix[vertex2, vertex1] = 1;
-                }
-            }
+            var degreeVector = IncidenceToVector(incidenceMatrix);
+            var adjacencyMatrix = VectorToAdjacency(degreeVector);
 
             return adjacencyMatrix;
         }
