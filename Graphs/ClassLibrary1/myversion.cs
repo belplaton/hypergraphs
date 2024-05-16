@@ -1,25 +1,25 @@
 using System;
 using System.Collections.Generic;
 
-public class Graph
+public class GraphOther
 {
     private int[,] adjacencyMatrix;
     private int[,] incidenceMatrix;
     private List<int>[] adjacencyList;
 
-    public Graph(int[,] adjMatrix)
+    public GraphOther(int[,] adjMatrix)
     {
         adjacencyMatrix = adjMatrix;
         InitializeAdjacencyListFromAdjacencyMatrix();
     }
 
-    public Graph(int[,] incMatrix, bool isIncidence)
+    public GraphOther(int[,] incMatrix, bool isIncidence)
     {
         incidenceMatrix = incMatrix;
         InitializeAdjacencyListFromIncidenceMatrix();
     }
 
-    public Graph(int[] vector)
+    public GraphOther(int[] vector)
     {
         InitializeAdjacencyListFromVector(vector);
     }
@@ -162,36 +162,5 @@ public class Graph
             }
         }
         return resultMatrix;
-    }
-}
-
-class Program
-{
-    static void Main(string[] args)
-    {
-        // Пример инициализации через матрицу смежности
-        int[,] adjacencyMatrix = {
-            {0, 1, 1},
-            {1, 0, 0},
-            {1, 0, 0}
-        };
-        Graph graph1 = new Graph(adjacencyMatrix);
-        graph1.PrintAdjacencyMatrix();
-        graph1.PrintAdjacencyList();
-
-        // Пример инициализации через матрицу инцидентности
-        int[,] incidenceMatrix = {
-            {1, 1, 0, 0},
-            {-1, 0, 1, 0},
-            {0, -1, -1, 1}
-        };
-        Graph graph2 = new Graph(incidenceMatrix, true);
-        graph2.PrintIncidenceMatrix();
-        graph2.PrintAdjacencyList();
-
-        // Пример инициализации через вектор
-        int[] vector = {0, 1, 1, 0, 0};
-        Graph graph3 = new Graph(vector);
-        graph3.PrintAdjacencyList();
     }
 }

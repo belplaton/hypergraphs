@@ -13,23 +13,38 @@
 
             if (tempDegreeVector.Sum() % 2 != 0)
             {
-                Console.WriteLine("Degree sequence is not graphical. Cannot reconstruct the graph.");
+                Console.WriteLine("[A] Degree sequence is not graphical. Cannot reconstruct the adjacency graph.");
                 return new int[0, 0];
             }
 
-            var vertices = tempDegreeVector.Count();
+            var vertices = tempDegreeVector.Length;
             var adjacencyMatrix = new int[vertices, vertices];
 
-            for (int i = 0; i < vertices; i++)
+            for (var i = 0; i < vertices; i++)
             {
-                for (int j = i + 1; j < vertices; j++)
+                while (tempDegreeVector[i] > 0)
                 {
-                    if (tempDegreeVector[i] > 0 && tempDegreeVector[j] > 0)
+                    if (tempDegreeVector[i] >= vertices)
                     {
-                        adjacencyMatrix[i, j] = 1;
-                        adjacencyMatrix[j, i] = 1;
-                        tempDegreeVector[i]--;
-                        tempDegreeVector[j]--;
+                        Console.WriteLine($"[B: {i}] Degree sequence is not graphical. Cannot reconstruct the adjacency graph.");
+                        return new int[0, 0];
+                    }
+
+                    for (var j = i + 1; j < vertices; j++)
+                    {
+                        if (tempDegreeVector[i] > 0 && tempDegreeVector[j] > 0)
+                        {
+                            adjacencyMatrix[i, j] = 1;
+                            adjacencyMatrix[j, i] = 1;
+                            tempDegreeVector[i]--;
+                            tempDegreeVector[j]--;
+                        }
+                    }
+
+                    if (tempDegreeVector[i] > 0)
+                    {
+                        Console.WriteLine($"[C: {i}, {tempDegreeVector[i]}] Degree sequence is not graphical. Cannot reconstruct the adjacency graph.");
+                        return new int[0, 0];
                     }
                 }
             }
@@ -83,7 +98,7 @@
             return incidenceMatrix;
         }
 
-        public static int[,] VectorToIncedence(in int[] degreeVector)
+        public static int[,] VectorToIncidence(in int[] degreeVector)
         {
             var tempDegreeVector = degreeVector.ToArray();
             var adjacencyMatrix = VectorToAdjacency(tempDegreeVector);
@@ -110,6 +125,65 @@
             return incidenceMatrix;
         }
 
+        public static int[,] IncidenceToAdjacency(int[,] incidenceMatrix)
+        {
+            int vertices = incidenceMatrix.GetLength(0);
+            int edges = incidenceMatrix.GetLength(1);
+
+            int[,] adjacencyMatrix = new int[vertices, vertices];
+
+            for (int k = 0; k < edges; k++)
+            {
+                int vertex1 = -1;
+                int vertex2 = -1;
+
+                for (int i = 0; i < vertices; i++)
+                {
+                    if (incidenceMatrix[i, k] == 1)
+                    {
+                        if (vertex1 == -1)
+                        {
+                            vertex1 = i;
+                        }
+                        else
+                        {
+                            vertex2 = i;
+                            break;
+                        }
+                    }
+                }
+
+                if (vertex1 != -1 && vertex2 != -1)
+                {
+                    adjacencyMatrix[vertex1, vertex2] = 1;
+                    adjacencyMatrix[vertex2, vertex1] = 1;
+                }
+            }
+
+            return adjacencyMatrix;
+        }
+
+        public static int[] IncidenceToVector(int[,] incidenceMatrix)
+        {
+            int vertices = incidenceMatrix.GetLength(0);
+            int edges = incidenceMatrix.GetLength(1);
+
+            int[] degreeVector = new int[vertices];
+
+            for (int i = 0; i < vertices; i++)
+            {
+                for (int j = 0; j < edges; j++)
+                {
+                    if (incidenceMatrix[i, j] == 1)
+                    {
+                        degreeVector[i]++;
+                    }
+                }
+            }
+
+            return degreeVector;
+        }
+
         public static void PrintGraph(in int[,] matrix)
         {
             if (matrix == null)
@@ -128,6 +202,20 @@
                 }
 
                 Console.WriteLine();
+            }
+        }
+
+        public static void PrintVector(in int[] matrix)
+        {
+            if (matrix == null)
+            {
+                throw new ArgumentNullException(nameof(matrix));
+            }
+
+            var vertices = matrix.GetLength(0);
+            for (int i = 0; i < vertices; i++)
+            {
+                Console.Write($"{matrix[i]} ");
             }
         }
     }
