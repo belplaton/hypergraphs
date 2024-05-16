@@ -79,6 +79,11 @@
             return CheckVectorGraphical(degreeVector);
         }
 
+        public static bool CheckIncidenceGraphical(in int[,] incidenceMatrix)
+        {
+            return TryIncidenceToVector(incidenceMatrix, out var _);
+        }
+
         #endregion
 
         #region Safe versions
@@ -167,6 +172,133 @@
             if (degreeVector.Sum() % 2 != 0)
             {
                 degreeVector = new int[0];
+                return false;
+            }
+
+            return true;
+        }
+
+        public static bool TryAdjacencyToIncidence(in int[,] adjacencyMatrix, out int[,] incidenceMatrix)
+        {
+            if (adjacencyMatrix == null)
+            {
+                incidenceMatrix = new int[0, 0];
+                return false;
+            }
+
+            var vertices = adjacencyMatrix.GetLength(0);
+            if (TryAdjacencyToVector(adjacencyMatrix, out var degreeVector))
+            {
+                var edges = degreeVector.Sum() / 2;
+
+                incidenceMatrix = new int[vertices, edges];
+                var k = 0;
+
+                for (int i = 0; i < vertices; i++)
+                {
+                    for (int j = i; j < vertices; j++)
+                    {
+                        if (adjacencyMatrix[i, j] == 1)
+                        {
+                            incidenceMatrix[i, k] = 1;
+                            incidenceMatrix[j, k] = 1;
+                            k++;
+                        }
+                    }
+                }
+
+                return true;
+            }
+
+            incidenceMatrix = new int[0, 0];
+            return false;
+        }
+
+        public static bool TryVectorIncidence(in int[] degreeVector, out int[,] incidenceMatrix)
+        {
+            if (degreeVector == null)
+            {
+                incidenceMatrix = new int[0, 0];
+                return false;
+            }
+
+            if (TryVectorToAdjacency(degreeVector, out var adjacencyMatrix))
+            {
+                var vertices = adjacencyMatrix.GetLength(0);
+                var edges = degreeVector.Sum() / 2;
+
+                incidenceMatrix = new int[vertices, edges];
+                var k = 0;
+
+                for (int i = 0; i < vertices; i++)
+                {
+                    for (int j = i; j < vertices; j++)
+                    {
+                        if (adjacencyMatrix[i, j] == 1)
+                        {
+                            incidenceMatrix[i, k] = 1;
+                            incidenceMatrix[j, k] = 1;
+                            k++;
+                        }
+                    }
+                }
+
+                return true;
+            }
+
+            incidenceMatrix = new int[0, 0];
+            return false;
+        }
+
+        public static bool TryIncidenceToVector(in int[,] incidenceMatrix, out int[] degreeVector)
+        {
+            if (incidenceMatrix == null)
+            {
+                degreeVector = new int[0];
+                return false;
+            }
+
+            int vertices = incidenceMatrix.GetLength(0);
+            int edges = incidenceMatrix.GetLength(1);
+
+            degreeVector = new int[vertices];
+
+            for (int i = 0; i < vertices; i++)
+            {
+                for (int j = 0; j < edges; j++)
+                {
+                    if (incidenceMatrix[i, j] == 1)
+                    {
+                        degreeVector[i]++;
+                    }
+                }
+            }
+
+            if (!CheckVectorGraphical(degreeVector))
+            {
+                degreeVector = new int[0];
+                return false;
+            }
+
+            return true;
+        }
+
+        public static bool IncidenceToAdjacency(in int[,] incidenceMatrix, out int[,] adjacencyMatrix)
+        {
+            if (incidenceMatrix == null)
+            {
+                adjacencyMatrix = new int[0, 0];
+                return false;
+            }
+
+            if (!TryIncidenceToVector(incidenceMatrix, out var degreeVector))
+            {
+                adjacencyMatrix = new int[0, 0];
+                return false;
+            }
+
+            if (!TryVectorToAdjacency(degreeVector, out adjacencyMatrix))
+            {
                 return false;
             }
 
