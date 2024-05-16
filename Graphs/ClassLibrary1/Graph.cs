@@ -2,7 +2,6 @@
 {
     public static class Graph
     {
-
         #region Validation
 
         public static bool CheckVectorGraphical(in int[] degreeVector)
