@@ -125,7 +125,7 @@
 
         #endregion
 
-        #region Safe versions
+        #region Safe
 
         public static bool TryVectorToAdjacency(in int[] degreeVector, out int[,] adjacencyMatrix)
         {
@@ -382,6 +382,57 @@
             if (!TryVectorToAdjacency(degreeVector, out adjacencyMatrix, out errmes))
             {
                 return false;
+            }
+
+            return true;
+        }
+
+        public static bool TryGetBases(in int[,] adjacencyMatrix, out List<(int, int)> bases)
+        {
+            return TryGetBases(adjacencyMatrix, out bases, out var _);
+        }
+
+        public static bool TryGetBases(in int[,] adjacencyMatrix, out List<(int, int)> bases, out string errmes)
+        {
+            bases = new List<(int, int)>();
+            if (!CheckAdjacencyGraphical(adjacencyMatrix, out errmes))
+            {
+                return false;
+            }
+
+            var verticles = adjacencyMatrix.GetLength(0);
+
+            var i = 0;
+            var j = verticles - 1;
+
+            var prev_i = 0;
+            var prev_j = 0;
+
+            while (i < verticles / 2)
+            {
+                var prev = 0;
+                for (var temp = j; temp > i; temp--)
+                {
+                    if (adjacencyMatrix[i, temp] == 1 && prev == 0)
+                    {
+                        j = temp;
+                    }
+                    else if (adjacencyMatrix[i, temp] == 0)
+                    {
+                        j = -1;
+                    }
+
+                    prev = adjacencyMatrix[i, temp];
+                }
+
+                if (prev_j != j && prev_i != prev_j)
+                {
+                    bases.Add((prev_i, prev_j));
+                }
+
+                prev_i = i;
+                prev_j = j;
+                i++;
             }
 
             return true;
