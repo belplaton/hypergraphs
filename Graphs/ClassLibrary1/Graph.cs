@@ -3,6 +3,179 @@
     public class Graph
     {
 
+        #region Validation
+
+        public static bool CheckVectorGraphical(in int[] degreeVector)
+        {
+            if (degreeVector == null)
+            {
+                Console.WriteLine("degreeVector is null");
+                return false;
+            }
+
+            var tempDegreeVector = degreeVector.ToArray();
+            var degreeVectorSum = tempDegreeVector.Sum();
+            if (degreeVectorSum % 2 != 0)
+            {
+                Console.WriteLine($"Sum {degreeVectorSum} % 2 != 0");
+                return false;
+            }
+
+            for (var i = 0; i < tempDegreeVector.Length; i++)
+            {
+                Console.WriteLine($"degreeVector[{i}] >= {tempDegreeVector.Length}");
+                if (tempDegreeVector[i] >= tempDegreeVector.Length)
+                {
+                    return false;
+                }
+            }
+
+            for (var i = 0; i < tempDegreeVector.Length; i++)
+            {
+                while (tempDegreeVector[i] > 0)
+                {
+                    for (var j = i + 1; j < tempDegreeVector.Length; j++)
+                    {
+                        if (tempDegreeVector[i] > 0 && tempDegreeVector[j] > 0)
+                        {
+                            tempDegreeVector[i]--;
+                            tempDegreeVector[j]--;
+                        }
+                    }
+
+                    if (tempDegreeVector[i] > 0)
+                    {
+                        Console.WriteLine($"Not Enough connections: degreeVector[{i}] > 0");
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        public static bool CheckAdjacencyGraphical(in int[,] adjacencyMatrix)
+        {
+            var degreeVector = new int[adjacencyMatrix.Length];
+
+            for (int i = 0; i < adjacencyMatrix.Length; i++)
+            {
+                var degree = 0;
+                for (int j = 0; j < adjacencyMatrix.Length; j++)
+                {
+                    if (adjacencyMatrix[i, j] == 1)
+                    {
+                        degree++;
+                    }
+                    else if (adjacencyMatrix[i, j] > 1)
+                    {
+                        return false;
+                    }
+
+                    degreeVector[i] = degree;
+                }
+            }
+
+            return CheckVectorGraphical(degreeVector);
+        }
+
+        #endregion
+
+        #region Safe versions
+
+        public static bool TryVectorToAdjacency(in int[] degreeVector, out int[,] adjacencyMatrix)
+        {
+            if (degreeVector == null)
+            {
+                adjacencyMatrix = new int[0, 0];
+                return false;
+            }
+
+            var tempDegreeVector = degreeVector.ToArray();
+
+            if (tempDegreeVector.Sum() % 2 != 0)
+            {
+                adjacencyMatrix = new int[0, 0];
+                return false;
+            }
+
+            var vertices = tempDegreeVector.Length;
+            adjacencyMatrix = new int[vertices, vertices];
+
+            for (var i = 0; i < vertices; i++)
+            {
+                while (tempDegreeVector[i] > 0)
+                {
+                    if (tempDegreeVector[i] >= vertices)
+                    {
+                        adjacencyMatrix = new int[0, 0];
+                        return false;
+                    }
+
+                    for (var j = i + 1; j < vertices; j++)
+                    {
+                        if (tempDegreeVector[i] > 0 && tempDegreeVector[j] > 0)
+                        {
+                            adjacencyMatrix[i, j] = 1;
+                            adjacencyMatrix[j, i] = 1;
+                            tempDegreeVector[i]--;
+                            tempDegreeVector[j]--;
+                        }
+                    }
+
+                    if (tempDegreeVector[i] > 0)
+                    {
+                        adjacencyMatrix = new int[0, 0];
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        public static bool TryAdjacencyToVector(in int[,] adjacencyMatrix, out int[] degreeVector)
+        {
+            if (adjacencyMatrix == null)
+            {
+                degreeVector = new int[0];
+                return false;
+            }
+
+            var vertices = adjacencyMatrix.GetLength(0);
+            degreeVector = new int[vertices];
+
+            for (int i = 0; i < vertices; i++)
+            {
+                var degree = 0;
+                for (int j = 0; j < vertices; j++)
+                {
+                    if (adjacencyMatrix[i, j] == 1)
+                    {
+                        degree++;
+                    }
+                    else if (adjacencyMatrix[i, j] > 1)
+                    {
+                        degreeVector = new int[0];
+                        return false;
+                    }
+
+                    degreeVector[i] = degree;
+                }
+            }
+
+            if (degreeVector.Sum() % 2 != 0)
+            {
+                degreeVector = new int[0];
+                return false;
+            }
+
+            return true;
+        }
+
+        #endregion
+
+        #region Standart
 
         public static int[,] VectorToAdjacency(in int[] degreeVector)
         {
@@ -187,6 +360,10 @@
             return degreeVector;
         }
 
+        #endregion
+
+        #region Utility
+
         public static void PrintGraph(in int[,] matrix)
         {
             if (matrix == null)
@@ -221,5 +398,7 @@
                 Console.Write($"{matrix[i]} ");
             }
         }
+
+        #endregion
     }
 }
