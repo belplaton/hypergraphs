@@ -10,6 +10,20 @@ class Program
             Graph.PrintGraph(adjacencyMatrix);
         }
 
+        Console.WriteLine();
+
+        if (Graph.TryVectorToIncidence(degreeVector, out var incidenceMatrix))
+        {
+            Graph.PrintGraph(incidenceMatrix);
+        }
+
+        Console.WriteLine();
+
+        if (Graph.TryIncidenceToAdjacency(incidenceMatrix, out var aab))
+        {
+            Graph.PrintGraph(aab);
+        }
+
         Console.ReadLine();
     }
 }

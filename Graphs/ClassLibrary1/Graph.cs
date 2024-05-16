@@ -9,7 +9,6 @@
         {
             if (degreeVector == null)
             {
-                Console.WriteLine("degreeVector is null");
                 return false;
             }
 
@@ -17,13 +16,11 @@
             var degreeVectorSum = tempDegreeVector.Sum();
             if (degreeVectorSum % 2 != 0)
             {
-                Console.WriteLine($"Sum {degreeVectorSum} % 2 != 0");
                 return false;
             }
 
             for (var i = 0; i < tempDegreeVector.Length; i++)
             {
-                Console.WriteLine($"degreeVector[{i}] >= {tempDegreeVector.Length}");
                 if (tempDegreeVector[i] >= tempDegreeVector.Length)
                 {
                     return false;
@@ -45,7 +42,6 @@
 
                     if (tempDegreeVector[i] > 0)
                     {
-                        Console.WriteLine($"Not Enough connections: degreeVector[{i}] > 0");
                         return false;
                     }
                 }
@@ -214,7 +210,7 @@
             return false;
         }
 
-        public static bool TryVectorIncidence(in int[] degreeVector, out int[,] incidenceMatrix)
+        public static bool TryVectorToIncidence(in int[] degreeVector, out int[,] incidenceMatrix)
         {
             if (degreeVector == null)
             {
@@ -283,7 +279,7 @@
             return true;
         }
 
-        public static bool IncidenceToAdjacency(in int[,] incidenceMatrix, out int[,] adjacencyMatrix)
+        public static bool TryIncidenceToAdjacency(in int[,] incidenceMatrix, out int[,] adjacencyMatrix)
         {
             if (incidenceMatrix == null)
             {
