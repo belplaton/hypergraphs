@@ -1,6 +1,6 @@
 ﻿namespace HyperGraphs
 {
-    public class Graph
+    public static class Graph
     {
 
         #region Validation
