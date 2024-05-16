@@ -2,6 +2,11 @@
 {
     public class Graph
     {
+        public bool CheckGraphical()
+        {
+
+        }
+
         public static int[,] VectorToAdjacency(in int[] degreeVector)
         {
             if (degreeVector == null)
@@ -13,8 +18,7 @@
 
             if (tempDegreeVector.Sum() % 2 != 0)
             {
-                Console.WriteLine("[A] Degree sequence is not graphical. Cannot reconstruct the adjacency graph.");
-                return new int[0, 0];
+                throw new ArgumentException($"[Connections Sum: {tempDegreeVector.Sum()} % 2 != 0] Degree sequence is not graphical. Cannot reconstruct the adjacency graph.");
             }
 
             var vertices = tempDegreeVector.Length;
@@ -26,8 +30,7 @@
                 {
                     if (tempDegreeVector[i] >= vertices)
                     {
-                        Console.WriteLine($"[B: {i}] Degree sequence is not graphical. Cannot reconstruct the adjacency graph.");
-                        return new int[0, 0];
+                        throw new ArgumentException($"[Connections in {i} > vector length] Degree sequence is not graphical. Cannot reconstruct the adjacency graph.");
                     }
 
                     for (var j = i + 1; j < vertices; j++)
@@ -43,8 +46,7 @@
 
                     if (tempDegreeVector[i] > 0)
                     {
-                        Console.WriteLine($"[C: {i}, {tempDegreeVector[i]}] Degree sequence is not graphical. Cannot reconstruct the adjacency graph.");
-                        return new int[0, 0];
+                        throw new ArgumentException($"[Not enough other connections after {i}] Degree sequence is not graphical. Cannot reconstruct the adjacency graph.");
                     }
                 }
             }
@@ -71,9 +73,18 @@
                     {
                         degree++;
                     }
+                    else if (adjacencyMatrix[i, j] > 1)
+                    {
+                        throw new ArgumentException($"[Error: {i}, {j}] Adjacency matrix contains invalid value. Must be 0 or 1.");
+                    }
 
                     degreeVector[i] = degree;
                 }
+            }
+
+            if (degreeVector.Sum() % 2 != 0)
+            {
+                throw new ArgumentException($"[Connections Sum: {degreeVector.Sum()} % 2 != 0] Degree sequence is not graphical. Cannot construct vector graph.");
             }
 
             return degreeVector;
