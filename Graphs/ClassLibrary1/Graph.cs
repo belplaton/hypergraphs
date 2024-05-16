@@ -62,12 +62,13 @@
 
         public static bool CheckAdjacencyGraphical(in int[,] adjacencyMatrix)
         {
-            var degreeVector = new int[adjacencyMatrix.Length];
+            var vertices = adjacencyMatrix.GetLength(0);
+            var degreeVector = new int[vertices];
 
-            for (int i = 0; i < adjacencyMatrix.Length; i++)
+            for (int i = 0; i < vertices; i++)
             {
                 var degree = 0;
-                for (int j = 0; j < adjacencyMatrix.Length; j++)
+                for (int j = 0; j < vertices; j++)
                 {
                     if (adjacencyMatrix[i, j] == 1)
                     {
@@ -87,12 +88,13 @@
 
         public static bool CheckAdjacencyGraphical(in int[,] adjacencyMatrix, out string errmes)
         {
-            var degreeVector = new int[adjacencyMatrix.Length];
+            var vertices = adjacencyMatrix.GetLength(0);
+            var degreeVector = new int[vertices];
 
-            for (int i = 0; i < adjacencyMatrix.Length; i++)
+            for (int i = 0; i < vertices; i++)
             {
                 var degree = 0;
-                for (int j = 0; j < adjacencyMatrix.Length; j++)
+                for (int j = 0; j < vertices; j++)
                 {
                     if (adjacencyMatrix[i, j] == 1)
                     {
@@ -533,7 +535,7 @@
             return incidenceMatrix;
         }
 
-        public static int[,] IncidenceToAdjacency(int[,] incidenceMatrix)
+        public static int[,] IncidenceToAdjacency(in int[,] incidenceMatrix)
         {
             if (incidenceMatrix == null)
             {
@@ -546,7 +548,7 @@
             return adjacencyMatrix;
         }
 
-        public static int[] IncidenceToVector(int[,] incidenceMatrix)
+        public static int[] IncidenceToVector(in int[,] incidenceMatrix)
         {
             if (incidenceMatrix == null)
             {
@@ -570,6 +572,52 @@
             }
 
             return degreeVector;
+        }
+
+        public static List<(int, int)> GetBases(in int[,] adjacencyMatrix)
+        {
+            var bases = new List<(int, int)>();
+            if (!CheckAdjacencyGraphical(adjacencyMatrix))
+            {
+                return bases;
+            }
+
+            var verticles = adjacencyMatrix.GetLength(0);
+
+            var i = 0;
+            var j = verticles - 1;
+
+            var prev_i = 0;
+            var prev_j = 0;
+
+            while (i < verticles)
+            {
+                var prev = 0;
+                for (var temp = j; temp > i; temp--)
+                {
+                    if (adjacencyMatrix[i, temp] == 1 && prev == 0)
+                    {
+                        j = temp;
+                    }
+                    else if (adjacencyMatrix[i, temp] == 0)
+                    {
+                        j = temp;
+                    }
+
+                    prev = adjacencyMatrix[i, temp];
+                }
+
+                if (prev_j != j && prev_i != prev_j)
+                {
+                    bases.Add((prev_i, prev_j));
+                }
+
+                prev_i = i;
+                prev_j = j;
+                i++;
+            }
+
+            return bases;
         }
 
         #endregion
