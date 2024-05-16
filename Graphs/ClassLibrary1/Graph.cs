@@ -386,12 +386,41 @@
             return true;
         }
 
-        public static bool TryGetBases(in int[,] adjacencyMatrix, out List<(int, int)> bases)
+        public static bool GetRibs(in int[,] adjacencyMatrix, out List<(int, int)> ribs, bool inverse = false)
         {
-            return TryGetBases(adjacencyMatrix, out bases, out var _);
+            return GetRibs(adjacencyMatrix, out ribs, out var _, inverse: inverse);
         }
 
-        public static bool TryGetBases(in int[,] adjacencyMatrix, out List<(int, int)> bases, out string errmes)
+        public static bool GetRibs(in int[,] adjacencyMatrix, out List<(int, int)> ribs, out string errmes, bool inverse = false)
+        {
+            ribs = new List<(int, int)>();
+            if (!CheckAdjacencyGraphical(adjacencyMatrix, out errmes))
+            {
+                return false;
+            }
+
+            var verticles = adjacencyMatrix.GetLength(0);
+
+            for (var i = 0; i < verticles / 2; i++)
+            {
+                for (var j = verticles - 1; j > i; j--)
+                {
+                    if (adjacencyMatrix[i, j] == 1)
+                    {
+                        ribs.Add(inverse ? (j, i) : (i, j));
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        public static bool TryGetBases(in int[,] adjacencyMatrix, out List<(int, int)> bases, bool inverse = false)
+        {
+            return TryGetBases(adjacencyMatrix, out bases, out var _, inverse: inverse);
+        }
+
+        public static bool TryGetBases(in int[,] adjacencyMatrix, out List<(int, int)> bases, out string errmes, bool inverse = false)
         {
             bases = new List<(int, int)>();
             if (!CheckAdjacencyGraphical(adjacencyMatrix, out errmes))
@@ -426,7 +455,7 @@
 
                 if (prev_j != j && prev_i != prev_j)
                 {
-                    bases.Add((prev_i, prev_j));
+                    bases.Add(inverse ? (prev_j, prev_i) : (prev_i, prev_j));
                 }
 
                 prev_i = i;
@@ -624,7 +653,31 @@
             return degreeVector;
         }
 
-        public static List<(int, int)> GetBases(in int[,] adjacencyMatrix)
+        public static List<(int, int)> GetRibs(in int[,] adjacencyMatrix, bool inverse = false)
+        {
+            var ribs = new List<(int, int)>();
+            if (!CheckAdjacencyGraphical(adjacencyMatrix))
+            {
+                return ribs;
+            }
+
+            var verticles = adjacencyMatrix.GetLength(0);
+
+            for (var i = 0; i < verticles / 2; i++)
+            {
+                for (var j = verticles - 1; j > i; j--)
+                {
+                    if (adjacencyMatrix[i, j] == 1)
+                    {
+                        ribs.Add(inverse ? (j, i) : (i, j));
+                    }
+                }
+            }
+
+            return ribs;
+        }
+
+        public static List<(int, int)> GetBases(in int[,] adjacencyMatrix, bool inverse = false)
         {
             var bases = new List<(int, int)>();
             if (!CheckAdjacencyGraphical(adjacencyMatrix))
@@ -659,7 +712,7 @@
 
                 if (prev_j != j && prev_i != prev_j)
                 {
-                    bases.Add((prev_i, prev_j));
+                    bases.Add(inverse ? (prev_j, prev_i) : (prev_i, prev_j));
                 }
 
                 prev_i = i;

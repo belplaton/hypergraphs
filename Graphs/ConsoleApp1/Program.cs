@@ -18,7 +18,7 @@ class Program
         if (Graph.CheckAdjacencyGraphical(adj, out errmes))
         {
             Graph.PrintGraph(adj);
-            var bases = Graph.GetBases(in adj);
+            var bases = Graph.GetRibs(in adj);
             foreach (var basa in bases)
             {
                 Console.WriteLine($"base: {basa}");
