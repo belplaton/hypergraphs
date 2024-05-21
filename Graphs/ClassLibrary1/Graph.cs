@@ -729,7 +729,7 @@ namespace HyperGraphs
             return bases;
         }
         
-        static string GetSignature(int[,] adjacencyMatrix)
+        public static string GetSignature(int[,] adjacencyMatrix)
         {
             int n = adjacencyMatrix.GetLength(0);
             StringBuilder signature = new StringBuilder(new string('0', n * n));
@@ -745,10 +745,39 @@ namespace HyperGraphs
                 {
                     if (adjacencyMatrix[i, j] == 1)
                     {
-                        int index = i * n + j; // Переводим координаты в одномерный индекс
+                        int index = i * n + j;
                         signature[index] = '1';
                     }
                 }
+            }
+    
+            return signature.ToString();
+        }
+        
+        public static int[,] SignatureToAdjacencyMatrix(string signature, int n)
+        {
+            int[,] adjacencyMatrix = new int[n, n];
+    
+            for (int i = 0; i < n; ++i)
+            {
+                for (int j = 0; j < n; ++j)
+                {
+                    int index = i * n + j;
+                    adjacencyMatrix[i, j] = signature[index] == '1' ? 1 : 0;
+                }
+            }
+    
+            return adjacencyMatrix;
+        }
+        
+        public static string BaseToSignature(List<(int, int)> baseList, int n)
+        {
+            StringBuilder signature = new StringBuilder(new string('0', n * n));
+    
+            foreach (var (row, col) in baseList)
+            {
+                int index = (row - 1) * n + (col - 1);
+                signature[index] = '1';
             }
     
             return signature.ToString();
