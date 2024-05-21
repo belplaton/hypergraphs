@@ -1,4 +1,4 @@
-﻿namespace HyperGraphs
+namespace HyperGraphs
 {
     public static class Graph
     {
@@ -121,7 +121,7 @@
         {
             return TryIncidenceToVector(incidenceMatrix, out var _, out errmes);
         }
-
+        
         #endregion
 
         #region Safe
@@ -465,6 +465,12 @@
 
             return true;
         }
+        
+        public static bool TryGetSirnature(int[,] adjacencyMatrix, string signature)
+        {
+            string generatedSignature = GetSignatureFromAdjacencyMatrix(adjacencyMatrix);
+            return generatedSignature == signature;
+        }
 
         #endregion
 
@@ -722,7 +728,32 @@
 
             return bases;
         }
-
+        
+        static string GetSignature(int[,] adjacencyMatrix)
+        {
+            int n = adjacencyMatrix.GetLength(0);
+            StringBuilder signature = new StringBuilder(new string('0', n * n));
+            
+            if (!CheckAdjacencyGraphical(adjacencyMatrix))
+            {
+                return signature.ToString();
+            }
+    
+            for (int i = 0; i < n; ++i)
+            {
+                for (int j = 0; j < n; ++j)
+                {
+                    if (adjacencyMatrix[i, j] == 1)
+                    {
+                        int index = i * n + j; // Переводим координаты в одномерный индекс
+                        signature[index] = '1';
+                    }
+                }
+            }
+    
+            return signature.ToString();
+        }
+        
         #endregion
 
         #region Utility
@@ -764,4 +795,6 @@
 
         #endregion
     }
+
+
 }
