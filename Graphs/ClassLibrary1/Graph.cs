@@ -958,6 +958,8 @@ namespace HyperGraphs
             {
                 Console.Write($"{matrix[i]} ");
             }
+
+            Console.WriteLine();
         }
 
         public static void PrintList<T>(in List<T> list)
@@ -971,6 +973,8 @@ namespace HyperGraphs
             {
                 Console.Write($"{list[i]} ");
             }
+
+            Console.WriteLine();
         }
 
         #endregion
