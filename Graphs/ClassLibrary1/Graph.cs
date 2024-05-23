@@ -388,12 +388,12 @@ namespace HyperGraphs
             return true;
         }
 
-        public static bool GetRibs(in int[,] adjacencyMatrix, out List<(int, int)> ribs, bool inverse = false)
+        public static bool TryGetRibs(in int[,] adjacencyMatrix, out List<(int, int)> ribs, bool inverse = false)
         {
-            return GetRibs(adjacencyMatrix, out ribs, out var _, inverse: inverse);
+            return TryGetRibs(adjacencyMatrix, out ribs, out var _, inverse: inverse);
         }
 
-        public static bool GetRibs(in int[,] adjacencyMatrix, out List<(int, int)> ribs, out string errmes, bool inverse = false)
+        public static bool TryGetRibs(in int[,] adjacencyMatrix, out List<(int, int)> ribs, out string errmes, bool inverse = false)
         {
             ribs = new List<(int, int)>();
             if (!CheckAdjacencyGraphical(adjacencyMatrix, out errmes))
@@ -467,11 +467,70 @@ namespace HyperGraphs
 
             return true;
         }
-        
-        public static bool TryGetSirnature(int[,] adjacencyMatrix, string signature)
+
+        public static bool TryGetSignature(int[,] adjacencyMatrix, out int[] signature)
         {
-            string generatedSignature = GetSignatureFromAdjacencyMatrix(adjacencyMatrix);
-            return generatedSignature == signature;
+            return TryGetSignature(adjacencyMatrix, out signature, out _);
+        }
+
+        public static bool TryGetSignature(int[,] adjacencyMatrix, out int[] signature, out string errmes)
+        {
+            var vertices = adjacencyMatrix.GetLength(0);
+            signature = new int[vertices * vertices];
+
+            if (!CheckAdjacencyGraphical(adjacencyMatrix, out errmes))
+            {
+                return false;
+            }
+
+            for (int i = 0; i < vertices; ++i)
+            {
+                for (int j = 0; j < vertices; ++j)
+                {
+                    if (adjacencyMatrix[i, j] == 1)
+                    {
+                        int index = i * vertices + j;
+                        signature[index] = 1;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        public static bool TrySignatureToAdjacencyMatrix(int[] signature, out int[,] adjacencyMatrix)
+        {
+            return TrySignatureToAdjacencyMatrix(signature, out adjacencyMatrix, out _);
+        }
+
+        public static bool TrySignatureToAdjacencyMatrix(int[] signature, out int[,] adjacencyMatrix, out string errmes)
+        {
+            if (signature == null)
+            {
+                throw new ArgumentNullException(nameof(signature));
+            }
+
+            var vertices = Convert.ToInt32(Math.Pow(signature.GetLength(0), (1 / 2)));
+            if (signature.GetLength(0) / vertices != vertices)
+            {
+                adjacencyMatrix = new int[0, 0];
+                errmes = "Signature length must be square. (64, 49, 36, ...)";
+                return false;
+            }
+
+            adjacencyMatrix = new int[vertices, vertices];
+
+            for (int i = 0; i < vertices; ++i)
+            {
+                for (int j = 0; j < vertices; ++j)
+                {
+                    int index = i * vertices + j;
+                    adjacencyMatrix[i, j] = signature[index];
+                }
+            }
+
+            errmes = "";
+            return true;
         }
 
         #endregion
@@ -687,6 +746,11 @@ namespace HyperGraphs
 
         public static List<(int, int)> GetBases(in int[,] adjacencyMatrix, bool inverse = false)
         {
+            if (adjacencyMatrix == null)
+            {
+                throw new ArgumentNullException(nameof(adjacencyMatrix));
+            }
+
             var bases = new List<(int, int)>();
             if (!CheckAdjacencyGraphical(adjacencyMatrix))
             {
@@ -731,58 +795,75 @@ namespace HyperGraphs
             return bases;
         }
         
-        public static string GetSignature(int[,] adjacencyMatrix)
+        public static int[] GetSignature(int[,] adjacencyMatrix)
         {
-            int n = adjacencyMatrix.GetLength(0);
-            StringBuilder signature = new StringBuilder(new string('0', n * n));
+            if (adjacencyMatrix == null)
+            {
+                throw new ArgumentNullException(nameof(adjacencyMatrix));
+            }
+
+            var vertices = adjacencyMatrix.GetLength(0);
+            var signature = new int[vertices * vertices];
             
             if (!CheckAdjacencyGraphical(adjacencyMatrix))
             {
-                return signature.ToString();
+                return signature;
             }
     
-            for (int i = 0; i < n; ++i)
+            for (int i = 0; i < vertices; ++i)
             {
-                for (int j = 0; j < n; ++j)
+                for (int j = 0; j < vertices; ++j)
                 {
                     if (adjacencyMatrix[i, j] == 1)
                     {
-                        int index = i * n + j;
-                        signature[index] = '1';
+                        int index = i * vertices + j;
+                        signature[index] = 1;
                     }
                 }
             }
-    
-            return signature.ToString();
+
+            return signature;
         }
         
-        public static int[,] SignatureToAdjacencyMatrix(string signature, int n)
+        public static int[,] SignatureToAdjacencyMatrix(int[] signature)
         {
-            int[,] adjacencyMatrix = new int[n, n];
-    
-            for (int i = 0; i < n; ++i)
+            if (signature == null)
             {
-                for (int j = 0; j < n; ++j)
+                throw new ArgumentNullException(nameof(signature));
+            }
+
+            var vertices = (int)Math.Sqrt(signature.GetLength(0));
+            int[,] adjacencyMatrix = new int[vertices, vertices];
+    
+            for (int i = 0; i < vertices; ++i)
+            {
+                for (int j = 0; j < vertices; ++j)
                 {
-                    int index = i * n + j;
-                    adjacencyMatrix[i, j] = signature[index] == '1' ? 1 : 0;
+                    int index = i * vertices + j;
+                    adjacencyMatrix[i, j] = signature[index];
                 }
             }
     
             return adjacencyMatrix;
         }
         
-        public static string BaseToSignature(List<(int, int)> baseList, int n)
+        public static int[] BaseToSignature(List<(int, int)> baseList)
         {
-            StringBuilder signature = new StringBuilder(new string('0', n * n));
-    
+            if (baseList == null)
+            {
+                throw new ArgumentNullException(nameof(baseList));
+            }
+
+            var vertices = baseList.Count;
+            var signature = new int[vertices * vertices];
+
             foreach (var (row, col) in baseList)
             {
-                int index = (row - 1) * n + (col - 1);
-                signature[index] = '1';
+                int index = (row - 1) * vertices + (col - 1);
+                signature[index] = 1;
             }
-    
-            return signature.ToString();
+
+            return signature;
         }
         
         #endregion
