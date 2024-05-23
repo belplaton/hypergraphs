@@ -53,6 +53,22 @@ class Program
             Console.WriteLine("Error Message: " + (errmes != string.Empty ? errmes : "None"));
         }
 
+        Console.WriteLine();
+
+        if (Graph.TryGetSignature(adjacencyMatrix, out var bba, out errmes))
+        {
+            Graph.PrintVector(bba);
+            Console.WriteLine("Error Message: " + (errmes != string.Empty ? errmes : "None"));
+        }
+
+        Console.WriteLine();
+
+        if (Graph.TryGetBases(adjacencyMatrix, out var bbc, out errmes))
+        {
+            Graph.PrintList(bbc);
+            Console.WriteLine("Error Message: " + (errmes != string.Empty ? errmes : "None"));
+        }
+
         Console.ReadLine();
     }
 }

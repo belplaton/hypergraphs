@@ -138,7 +138,7 @@ namespace HyperGraphs
             if (degreeVector == null)
             {
                 adjacencyMatrix = new int[0, 0];
-                errmes = "degreeVector is null";
+                errmes = $"{nameof(degreeVector)} is null";
                 return false;
             }
 
@@ -199,7 +199,7 @@ namespace HyperGraphs
             if (adjacencyMatrix == null)
             {
                 degreeVector = new int[0];
-                errmes = "adjacencyMatrix is null";
+                errmes = $"{nameof(adjacencyMatrix)} is null";
                 return false;
             }
 
@@ -247,7 +247,7 @@ namespace HyperGraphs
             if (adjacencyMatrix == null)
             {
                 incidenceMatrix = new int[0, 0];
-                errmes = "adjancencyMatrix is null";
+                errmes = $"{nameof(adjacencyMatrix)} is null";
                 return false;
             }
 
@@ -289,7 +289,7 @@ namespace HyperGraphs
             if (degreeVector == null)
             {
                 incidenceMatrix = new int[0, 0];
-                errmes = "degreeVector is null";
+                errmes = $"{nameof(degreeVector)} is null";
                 return false;
             }
 
@@ -331,7 +331,7 @@ namespace HyperGraphs
             if (incidenceMatrix == null)
             {
                 degreeVector = new int[0];
-                errmes = "incidenceMatrix is null";
+                errmes = $"{nameof(incidenceMatrix)} is null";
                 return false;
             }
 
@@ -370,7 +370,7 @@ namespace HyperGraphs
             if (incidenceMatrix == null)
             {
                 adjacencyMatrix = new int[0, 0];
-                errmes = "incidenceMatrix is null";
+                errmes = $"{nameof(incidenceMatrix)} is null";
                 return false;
             }
 
@@ -395,6 +395,13 @@ namespace HyperGraphs
 
         public static bool TryGetRibs(in int[,] adjacencyMatrix, out List<(int, int)> ribs, out string errmes, bool inverse = false)
         {
+            if (adjacencyMatrix == null)
+            {
+                ribs = new();
+                errmes = $"{nameof(adjacencyMatrix)} is null!";
+                return false;
+            }
+
             ribs = new List<(int, int)>();
             if (!CheckAdjacencyGraphical(adjacencyMatrix, out errmes))
             {
@@ -424,6 +431,13 @@ namespace HyperGraphs
 
         public static bool TryGetBases(in int[,] adjacencyMatrix, out List<(int, int)> bases, out string errmes, bool inverse = false)
         {
+            if (adjacencyMatrix == null)
+            {
+                bases = new();
+                errmes = $"{nameof(adjacencyMatrix)} is null!";
+                return false;
+            }
+
             bases = new List<(int, int)>();
             if (!CheckAdjacencyGraphical(adjacencyMatrix, out errmes))
             {
@@ -475,6 +489,13 @@ namespace HyperGraphs
 
         public static bool TryGetSignature(int[,] adjacencyMatrix, out int[] signature, out string errmes)
         {
+            if (adjacencyMatrix == null)
+            {
+                signature = new int[0];
+                errmes = $"{nameof(adjacencyMatrix)} is null!";
+                return false;
+            }
+
             var vertices = adjacencyMatrix.GetLength(0);
             signature = new int[vertices * vertices];
 
@@ -507,7 +528,9 @@ namespace HyperGraphs
         {
             if (signature == null)
             {
-                throw new ArgumentNullException(nameof(signature));
+                adjacencyMatrix = new int[0, 0];
+                errmes = $"{nameof(signature)} is null!";
+                return false;
             }
 
             var vertices = Convert.ToInt32(Math.Pow(signature.GetLength(0), (1 / 2)));
@@ -527,6 +550,33 @@ namespace HyperGraphs
                     int index = i * vertices + j;
                     adjacencyMatrix[i, j] = signature[index];
                 }
+            }
+
+            errmes = "";
+            return true;
+        }
+
+        public static bool TryBaseToSignature(List<(int, int)> baseList, out int[] signature)
+        {
+            return TryBaseToSignature(baseList, out signature, out _);
+        }
+
+        public static bool TryBaseToSignature(List<(int, int)> baseList, out int[] signature, out string errmes)
+        {
+            if (baseList == null)
+            {
+                signature = new int[0];
+                errmes = $"{nameof(baseList)} is null!";
+                return false;
+            }
+
+            var vertices = baseList.Count;
+            signature = new int[vertices * vertices];
+
+            foreach (var (row, col) in baseList)
+            {
+                int index = (row - 1) * vertices + (col - 1);
+                signature[index] = 1;
             }
 
             errmes = "";
@@ -832,7 +882,12 @@ namespace HyperGraphs
                 throw new ArgumentNullException(nameof(signature));
             }
 
-            var vertices = (int)Math.Sqrt(signature.GetLength(0));
+            var vertices = Convert.ToInt32(Math.Pow(signature.GetLength(0), (1 / 2)));
+            if (signature.GetLength(0) / vertices != vertices)
+            {
+                throw new ArgumentException("Signature length must be square. (64, 49, 36, ...)");
+            }
+
             int[,] adjacencyMatrix = new int[vertices, vertices];
     
             for (int i = 0; i < vertices; ++i)
@@ -902,6 +957,19 @@ namespace HyperGraphs
             for (int i = 0; i < vertices; i++)
             {
                 Console.Write($"{matrix[i]} ");
+            }
+        }
+
+        public static void PrintList<T>(in List<T> list)
+        {
+            if (list == null)
+            {
+                throw new ArgumentNullException(nameof(list));
+            }
+
+            for (int i = 0; i < list.Count; i++)
+            {
+                Console.Write($"{list[i]} ");
             }
         }
 
