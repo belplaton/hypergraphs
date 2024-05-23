@@ -1,3 +1,5 @@
+using System.Text;
+
 namespace HyperGraphs
 {
     public static class Graph
