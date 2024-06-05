@@ -17,7 +17,7 @@ class Program
 
         if (Graph.CheckAdjacencyGraphical(adj, out errmes))
         {
-            Graph.PrintGraph(adj);
+            Console.WriteLine(Graph.ToString(adj));
             var bases = Graph.GetRibs(in adj);
             foreach (var basa in bases)
             {
@@ -33,7 +33,7 @@ class Program
 
         if (Graph.TryVectorToAdjacency(degreeVector, out var adjacencyMatrix, out errmes))
         {
-            Graph.PrintGraph(adjacencyMatrix);
+            Console.WriteLine(Graph.ToString(adjacencyMatrix));
             Console.WriteLine("Error Message: " + (errmes != string.Empty ? errmes : "None"));
         }
 
@@ -41,7 +41,7 @@ class Program
 
         if (Graph.TryVectorToIncidence(degreeVector, out var incidenceMatrix, out errmes))
         {
-            Graph.PrintGraph(incidenceMatrix);
+            Console.WriteLine(Graph.ToString(incidenceMatrix));
             Console.WriteLine("Error Message: " + (errmes != string.Empty ? errmes : "None"));
         }
 
@@ -49,7 +49,7 @@ class Program
 
         if (Graph.TryIncidenceToAdjacency(incidenceMatrix, out var aab, out errmes))
         {
-            Graph.PrintGraph(aab);
+            Console.WriteLine(Graph.ToString(aab));
             Console.WriteLine("Error Message: " + (errmes != string.Empty ? errmes : "None"));
         }
 
@@ -57,7 +57,7 @@ class Program
 
         if (Graph.TryGetSignature(adjacencyMatrix, out var bba, out errmes))
         {
-            Graph.PrintVector(bba);
+            Console.WriteLine(Graph.ToString(bba));
             Console.WriteLine("Error Message: " + (errmes != string.Empty ? errmes : "None"));
         }
 
@@ -65,7 +65,7 @@ class Program
 
         if (Graph.TryGetBases(adjacencyMatrix, out var bbc, out errmes))
         {
-            Graph.PrintList(bbc);
+            Console.WriteLine(Graph.ToString(bbc));
             Console.WriteLine("Error Message: " + (errmes != string.Empty ? errmes : "None"));
         }
 

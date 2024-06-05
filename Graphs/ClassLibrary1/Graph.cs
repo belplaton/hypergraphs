@@ -6,11 +6,22 @@ namespace HyperGraphs
     {
         #region Validation
 
+        /// <summary>
+        /// Проверяет корректность вектора графа
+        /// </summary>
+        /// <param name="degreeVector">Вектор графа</param>
+        /// <returns></returns>
         public static bool CheckVectorGraphical(in int[] degreeVector)
         {
             return (CheckVectorGraphical(degreeVector, out var _));
         }
 
+        /// <summary>
+        /// Проверяет корректность вектора графа
+        /// </summary>
+        /// <param name="degreeVector">Вектора графа</param>
+        /// <param name="errmes">Передаваемая причина некорректности</param>
+        /// <returns></returns>
         public static bool CheckVectorGraphical(in int[] degreeVector, out string errmes)
         {
             if (degreeVector == null)
@@ -61,6 +72,11 @@ namespace HyperGraphs
             return true;
         }
 
+        /// <summary>
+        /// Проверяет корректность матрицы смежности
+        /// </summary>
+        /// <param name="adjacencyMatrix">Матрица смежности</param>
+        /// <returns></returns>
         public static bool CheckAdjacencyGraphical(in int[,] adjacencyMatrix)
         {
             var vertices = adjacencyMatrix.GetLength(0);
@@ -87,6 +103,12 @@ namespace HyperGraphs
             return CheckVectorGraphical(degreeVector);
         }
 
+        /// <summary>
+        /// Проверяеть корректность матрицы смежности
+        /// </summary>
+        /// <param name="adjacencyMatrix">Матрица смежности</param>
+        /// <param name="errmes">Передаваемая причина некорректности</param>
+        /// <returns></returns>
         public static bool CheckAdjacencyGraphical(in int[,] adjacencyMatrix, out string errmes)
         {
             var vertices = adjacencyMatrix.GetLength(0);
@@ -114,11 +136,22 @@ namespace HyperGraphs
             return CheckVectorGraphical(degreeVector, out errmes);
         }
 
+        /// <summary>
+        /// Проверяет корректность матрицы инцедентности
+        /// </summary>
+        /// <param name="incidenceMatrix">Матрица инцедентности</param>
+        /// <returns></returns>
         public static bool CheckIncidenceGraphical(in int[,] incidenceMatrix)
         {
             return TryIncidenceToVector(incidenceMatrix, out var _);
         }
 
+        /// <summary>
+        /// Проверяет корректность матрицы инцедентности
+        /// </summary>
+        /// <param name="incidenceMatrix">Матрица инцедентности</param>
+        /// <param name="errmes">Передаваемая причина некорректности</param>
+        /// <returns></returns>
         public static bool CheckIncidenceGraphical(in int[,] incidenceMatrix, out string errmes)
         {
             return TryIncidenceToVector(incidenceMatrix, out var _, out errmes);
@@ -128,11 +161,24 @@ namespace HyperGraphs
 
         #region Safe
 
+        /// <summary>
+        /// Пытается конвертировать вектор графа в матрицу смежности с возвратом успеха результата
+        /// </summary>
+        /// <param name="degreeVector">Вектор графа</param>
+        /// <param name="adjacencyMatrix">Передаваемая матрица смежности</param>
+        /// <returns></returns>
         public static bool TryVectorToAdjacency(in int[] degreeVector, out int[,] adjacencyMatrix)
         {
             return TryVectorToAdjacency(degreeVector, out adjacencyMatrix, out var _);
         }
 
+        /// <summary>
+        /// Пытается конвертировать вектор графа в матрицу смежности с возвратом успеха результата
+        /// </summary>
+        /// <param name="degreeVector">Вектор графа</param>
+        /// <param name="adjacencyMatrix">Передаваемая матрица смежности</param>
+        /// <param name="errmes">Передаваемое сообщеие об ошибке конвертации</param>
+        /// <returns></returns>
         public static bool TryVectorToAdjacency(in int[] degreeVector, out int[,] adjacencyMatrix, out string errmes)
         {
             if (degreeVector == null)
@@ -189,11 +235,24 @@ namespace HyperGraphs
             return true;
         }
 
+        /// <summary>
+        /// Пытается конвертировать матрицу смежности в вектор графа с возвратом успеха результата
+        /// </summary>
+        /// <param name="adjacencyMatrix">Матрица смежности</param>
+        /// <param name="degreeVector">Передаваемый вектор графа</param>
+        /// <returns></returns>
         public static bool TryAdjacencyToVector(in int[,] adjacencyMatrix, out int[] degreeVector)
         {
             return TryAdjacencyToVector(adjacencyMatrix, out degreeVector);
         }
 
+        /// <summary>
+        /// Пытается конвертировать матрицу смежности в вектора графа с возвратом успеха результата
+        /// </summary>
+        /// <param name="adjacencyMatrix">Матрица смежности</param>
+        /// <param name="degreeVector">Передаваемый вектор графа</param>
+        /// <param name="errmes">Передаваемое сообщеие об ошибке конвертации</param>
+        /// <returns></returns>
         public static bool TryAdjacencyToVector(in int[,] adjacencyMatrix, out int[] degreeVector, out string errmes)
         {
             if (adjacencyMatrix == null)
@@ -237,11 +296,24 @@ namespace HyperGraphs
             return true;
         }
 
+        /// <summary>
+        /// Пытается конвертировать матрицу смежности в матрицу инцедентности с возвратом успеха результата
+        /// </summary>
+        /// <param name="adjacencyMatrix">Матрица смежности</param>
+        /// <param name="incidenceMatrix">Передаваемая матрица инцедентности</param>
+        /// <returns></returns>
         public static bool TryAdjacencyToIncidence(in int[,] adjacencyMatrix, out int[,] incidenceMatrix)
         {
             return TryAdjacencyToIncidence(adjacencyMatrix, out incidenceMatrix, out var _);
         }
 
+        /// <summary>
+        /// Пытается конвертировать матрицу смежности в матрицу инцедентности с возвратом успеха результата
+        /// </summary>
+        /// <param name="adjacencyMatrix">Матрица смежности</param>
+        /// <param name="incidenceMatrix">Передаваемая матрица инцедентности</param>
+        /// <param name="errmes">Передаваемое сообщеие об ошибке конвертации</param>
+        /// <returns></returns>
         public static bool TryAdjacencyToIncidence(in int[,] adjacencyMatrix, out int[,] incidenceMatrix, out string errmes)
         {
             if (adjacencyMatrix == null)
@@ -279,11 +351,24 @@ namespace HyperGraphs
             return false;
         }
 
+        /// <summary>
+        /// Пытается конвертировать вектор графа в матрицу инцедентности с возвратом успеха результата
+        /// </summary>
+        /// <param name="degreeVector">Вектор графа</param>
+        /// <param name="incidenceMatrix">Передаваемая матрица инцедентности</param>
+        /// <returns></returns>
         public static bool TryVectorToIncidence(in int[] degreeVector, out int[,] incidenceMatrix)
         {
             return TryVectorToIncidence(degreeVector, out incidenceMatrix, out var _);
         }
 
+        /// <summary>
+        /// Пытается конвертировать вектора графа в матрицу инцедентности с возвратом успеха результата
+        /// </summary>
+        /// <param name="degreeVector">Вектор графа</param>
+        /// <param name="incidenceMatrix">Передаваемая матрица инцедентности</param>
+        /// <param name="errmes">Передаваемое сообщеие об ошибке конвертации</param>
+        /// <returns></returns>
         public static bool TryVectorToIncidence(in int[] degreeVector, out int[,] incidenceMatrix, out string errmes)
         {
             if (degreeVector == null)
@@ -321,11 +406,24 @@ namespace HyperGraphs
             return false;
         }
 
+        /// <summary>
+        /// Пытается конвертировать матрицу инцедентности в вектор графа с возвратом успеха результата
+        /// </summary>
+        /// <param name="incidenceMatrix">Матрица инцедентности</param>
+        /// <param name="degreeVector">Передаваемый вектор графа</param>
+        /// <returns></returns>
         public static bool TryIncidenceToVector(in int[,] incidenceMatrix, out int[] degreeVector)
         {
             return TryIncidenceToVector(incidenceMatrix, out degreeVector, out var _);
         }
 
+        /// <summary>
+        /// Пытается конвертировать матрицу инцедентности в вектор графа с возвратом успеха результата
+        /// </summary>
+        /// <param name="incidenceMatrix">Матрица инцедентности</param>
+        /// <param name="degreeVector">Передаваемый вектор графа</param>
+        /// <param name="errmes">Передаваемое сообщеие об ошибке конвертации</param>
+        /// <returns></returns>
         public static bool TryIncidenceToVector(in int[,] incidenceMatrix, out int[] degreeVector, out string errmes)
         {
             if (incidenceMatrix == null)
@@ -360,11 +458,24 @@ namespace HyperGraphs
             return true;
         }
 
+        /// <summary>
+        /// Пытается конвертировать матрицу инцедентности в матрицу смежности с возвратом успеха результата
+        /// </summary>
+        /// <param name="incidenceMatrix">Матрица инцедентности</param>
+        /// <param name="adjacencyMatrix">Передаваемая матрица смежности</param>
+        /// <returns></returns>
         public static bool TryIncidenceToAdjacency(in int[,] incidenceMatrix, out int[,] adjacencyMatrix)
         {
             return TryIncidenceToAdjacency(incidenceMatrix, out adjacencyMatrix, out var _);
         }
 
+        /// <summary>
+        /// Пытается конвертировать матрицу инцедентности в матрицу смежности с возвратом успеха результата
+        /// </summary>
+        /// <param name="incidenceMatrix">Матрица инцедентности</param>
+        /// <param name="adjacencyMatrix">Передаваемая матрица смежности</param>
+        /// <param name="errmes">Передаваемое сообщеие об ошибке конвертации</param>
+        /// <returns></returns>
         public static bool TryIncidenceToAdjacency(in int[,] incidenceMatrix, out int[,] adjacencyMatrix, out string errmes)
         {
             if (incidenceMatrix == null)
@@ -388,11 +499,26 @@ namespace HyperGraphs
             return true;
         }
 
+        /// <summary>
+        /// Пытается получить ребра из матрицыф смежности с возвратом успеха результата
+        /// </summary>
+        /// <param name="adjacencyMatrix">Матрица смежности</param>
+        /// <param name="ribs">Передаваемый список ребер</param>
+        /// <param name="inverse">Обратное представление ребер (default = false)</param>
+        /// <returns></returns>
         public static bool TryGetRibs(in int[,] adjacencyMatrix, out List<(int, int)> ribs, bool inverse = false)
         {
             return TryGetRibs(adjacencyMatrix, out ribs, out var _, inverse: inverse);
         }
 
+        /// <summary>
+        /// Пытается получить ребра из матрицы смежности с возвратом успеха результата
+        /// </summary>
+        /// <param name="adjacencyMatrix">Матрица смежности</param>
+        /// <param name="ribs">Передаваемый список ребер</param>
+        /// <param name="errmes">Передаваемое сообщеие об ошибке конвертации</param>
+        /// <param name="inverse">Обратное представление ребер (default = false)</param>
+        /// <returns></returns>
         public static bool TryGetRibs(in int[,] adjacencyMatrix, out List<(int, int)> ribs, out string errmes, bool inverse = false)
         {
             if (adjacencyMatrix == null)
@@ -424,12 +550,29 @@ namespace HyperGraphs
             return true;
         }
 
-        public static bool TryGetBases(in int[,] adjacencyMatrix, out List<(int, int)> bases, bool inverse = false)
+        /// <summary>
+        /// Пытается получить базы из матрицы смежности с возвратом успеха результата
+        /// </summary>
+        /// <param name="adjacencyMatrix">Матрица смежности</param>
+        /// <param name="bases">Передаваемый список баз</param>
+        /// <param name="extreme">Для экстримального графа (default = true)</param>
+        /// <param name="inverse">Обратное представление ребер (default = false)</param>
+        /// <returns></returns>
+        public static bool TryGetBases(in int[,] adjacencyMatrix, out List<(int, int)> bases, bool extreme = true, bool inverse = false)
         {
-            return TryGetBases(adjacencyMatrix, out bases, out var _, inverse: inverse);
+            return TryGetBases(adjacencyMatrix, out bases, out var _, extreme: extreme, inverse: inverse);
         }
 
-        public static bool TryGetBases(in int[,] adjacencyMatrix, out List<(int, int)> bases, out string errmes, bool inverse = false)
+        /// <summary>
+        /// Пытается получить базы из матрицы смежности с возвратом успеха результата
+        /// </summary>
+        /// <param name="adjacencyMatrix">Матрица смежности</param>
+        /// <param name="bases">Передаваемый список баз</param>
+        /// <param name="errmes">Передаваемое сообщеие об ошибке конвертации</param>
+        /// <param name="extreme">Для экстримального графа (default = true)</param>
+        /// <param name="inverse">Обратное представление ребер (default = false)</param>
+        /// <returns></returns>
+        public static bool TryGetBases(in int[,] adjacencyMatrix, out List<(int, int)> bases, out string errmes, bool extreme = true, bool inverse = false)
         {
             if (adjacencyMatrix == null)
             {
@@ -459,6 +602,13 @@ namespace HyperGraphs
                 {
                     if (adjacencyMatrix[i, temp] == 1 && prev == 0)
                     {
+                        if (extreme)
+                        {
+                            errmes = "Cant find bases for not extreme adjacency matrix.";
+                            bases.Clear();
+                            return false;
+                        }
+
                         j = temp;
                     }
                     else if (adjacencyMatrix[i, temp] == 0)
@@ -482,11 +632,24 @@ namespace HyperGraphs
             return true;
         }
 
+        /// <summary>
+        /// Пытается получить сигнатуру из матрицы смежности с возвратом успеха конвертации
+        /// </summary>
+        /// <param name="adjacencyMatrix">Матрица смежности</param>
+        /// <param name="signature">Передаваемый вектор сигнатуры</param>
+        /// <returns></returns>
         public static bool TryGetSignature(int[,] adjacencyMatrix, out int[] signature)
         {
             return TryGetSignature(adjacencyMatrix, out signature, out _);
         }
 
+        /// <summary>
+        /// Пытается получить сигнатуру из матрицы смежности с возвратом успеха конвертации
+        /// </summary>
+        /// <param name="adjacencyMatrix">Матрица смежности</param>
+        /// <param name="signature">Передаваемый вектор сигнатуры</param>
+        /// <param name="errmes">Передаваемое сообщеие об ошибке конвертации</param>
+        /// <returns></returns>
         public static bool TryGetSignature(int[,] adjacencyMatrix, out int[] signature, out string errmes)
         {
             if (adjacencyMatrix == null)
@@ -519,11 +682,24 @@ namespace HyperGraphs
             return true;
         }
 
+        /// <summary>
+        /// Пытается получить матрицу смежности из сигнатуры с возвратом успеха конвертации
+        /// </summary>
+        /// <param name="signature">Вектора сигнатуры</param>
+        /// <param name="adjacencyMatrix">Передавемая матрица смежности</param>
+        /// <returns></returns>
         public static bool TrySignatureToAdjacencyMatrix(int[] signature, out int[,] adjacencyMatrix)
         {
             return TrySignatureToAdjacencyMatrix(signature, out adjacencyMatrix, out _);
         }
 
+        /// <summary>
+        /// Пытается получить матрицу смежности из сигнатуры с возвратом успеха конвертации
+        /// </summary>
+        /// <param name="signature">Вектора сигнатуры</param>
+        /// <param name="adjacencyMatrix">Передавемая матрица смежности</param>
+        /// <param name="errmes">Передаваемое сообщение об ошибке конвертации</param>
+        /// <returns></returns>
         public static bool TrySignatureToAdjacencyMatrix(int[] signature, out int[,] adjacencyMatrix, out string errmes)
         {
             if (signature == null)
@@ -556,11 +732,24 @@ namespace HyperGraphs
             return true;
         }
 
+        /// <summary>
+        /// Пытается получить сигнатуры из списка баз с возвратом успеха конвертации
+        /// </summary>
+        /// <param name="baseList">Список баз</param>
+        /// <param name="signature">Передаваемый вектор сигнатуры</param>
+        /// <returns></returns>
         public static bool TryBaseToSignature(List<(int, int)> baseList, out int[] signature)
         {
             return TryBaseToSignature(baseList, out signature, out _);
         }
 
+        /// <summary>
+        /// Пытается получить сигнатуры из списка баз с возвратом успеха конвертации
+        /// </summary>
+        /// <param name="baseList">Список баз</param>
+        /// <param name="signature">Передаваемый вектор сигнатуры</param>
+        /// <param name="errmes">Передаваемое сообщение об ошибке конвертации</param>
+        /// <returns></returns>
         public static bool TryBaseToSignature(List<(int, int)> baseList, out int[] signature, out string errmes)
         {
             if (baseList == null)
@@ -587,6 +776,13 @@ namespace HyperGraphs
 
         #region Standart
 
+        /// <summary>
+        /// Конвертирует вектор графа в матрицу смежности
+        /// </summary>
+        /// <param name="degreeVector">Вектор графа</param>
+        /// <returns>Матрица смежности</returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentException"></exception>
         public static int[,] VectorToAdjacency(in int[] degreeVector)
         {
             if (degreeVector == null)
@@ -634,6 +830,13 @@ namespace HyperGraphs
             return adjacencyMatrix;
         }
 
+        /// <summary>
+        /// Конветирует матрицу смежности в вектор графа
+        /// </summary>
+        /// <param name="adjacencyMatrix">Матрица смежности</param>
+        /// <returns>Вектор графа</returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentException"></exception>
         public static int[] AdjacencyToVector(in int[,] adjacencyMatrix)
         {
             if (adjacencyMatrix == null)
@@ -670,6 +873,12 @@ namespace HyperGraphs
             return degreeVector;
         }
 
+        /// <summary>
+        /// Конвертирует матрицу смежности в матрицу инцедентности
+        /// </summary>
+        /// <param name="adjacencyMatrix">Матрица смежности</param>
+        /// <returns>Матрица инцедентности</returns>
+        /// <exception cref="ArgumentNullException"></exception>
         public static int[,] AdjacencyToIncidence(in int[,] adjacencyMatrix)
         {
             if (adjacencyMatrix == null)
@@ -699,6 +908,12 @@ namespace HyperGraphs
             return incidenceMatrix;
         }
 
+        /// <summary>
+        /// Конвертирует вектор графа в матрицу инцедентности
+        /// </summary>
+        /// <param name="degreeVector">Вектор графа</param>
+        /// <returns>Матрица инцедентности</returns>
+        /// <exception cref="ArgumentNullException"></exception>
         public static int[,] VectorToIncidence(in int[] degreeVector)
         {
             if (degreeVector == null)
@@ -731,6 +946,12 @@ namespace HyperGraphs
             return incidenceMatrix;
         }
 
+        /// <summary>
+        /// Конвертирует матрицу инцедентности в матрицу смежности
+        /// </summary>
+        /// <param name="incidenceMatrix">Матрица инцедентности</param>
+        /// <returns>Матрица смежности</returns>
+        /// <exception cref="ArgumentNullException"></exception>
         public static int[,] IncidenceToAdjacency(in int[,] incidenceMatrix)
         {
             if (incidenceMatrix == null)
@@ -744,6 +965,12 @@ namespace HyperGraphs
             return adjacencyMatrix;
         }
 
+        /// <summary>
+        /// Конвертирует матрицу инцедентности в вектор графа
+        /// </summary>
+        /// <param name="incidenceMatrix">Матрица инцедентности</param>
+        /// <returns>Вектор графа</returns>
+        /// <exception cref="ArgumentNullException"></exception>
         public static int[] IncidenceToVector(in int[,] incidenceMatrix)
         {
             if (incidenceMatrix == null)
@@ -770,6 +997,12 @@ namespace HyperGraphs
             return degreeVector;
         }
 
+        /// <summary>
+        /// Получает список ребер из матрицы смежности
+        /// </summary>
+        /// <param name="adjacencyMatrix">Матрица смежности</param>
+        /// <param name="inverse">Обратное представление ребер (default = false)</param>
+        /// <returns>Список ребер</returns>
         public static List<(int, int)> GetRibs(in int[,] adjacencyMatrix, bool inverse = false)
         {
             var ribs = new List<(int, int)>();
@@ -794,7 +1027,15 @@ namespace HyperGraphs
             return ribs;
         }
 
-        public static List<(int, int)> GetBases(in int[,] adjacencyMatrix, bool inverse = false)
+        /// <summary>
+        /// Получает список баз из матрицы смежности
+        /// </summary>
+        /// <param name="adjacencyMatrix">Матрица смежности</param>
+        /// <param name="extreme">Для экстримального графа (default = true)</param>
+        /// <param name="inverse">Обратное представление ребер (default = false)</param>
+        /// <returns>Список баз</returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static List<(int, int)> GetBases(in int[,] adjacencyMatrix, bool extreme = true, bool inverse = false)
         {
             if (adjacencyMatrix == null)
             {
@@ -823,6 +1064,10 @@ namespace HyperGraphs
                     if (adjacencyMatrix[i, temp] == 1 && prev == 0)
                     {
                         j = temp;
+                        if (extreme)
+                        {
+                            throw new ArgumentNullException("Cant find bases for not extreme adjacency matrix.");
+                        }
                     }
                     else if (adjacencyMatrix[i, temp] == 0)
                     {
@@ -845,6 +1090,12 @@ namespace HyperGraphs
             return bases;
         }
         
+        /// <summary>
+        /// Получает вектор сигнатуры из матрицы смежности
+        /// </summary>
+        /// <param name="adjacencyMatrix">Матрица смежности</param>
+        /// <returns>Вектор сигнатуры</returns>
+        /// <exception cref="ArgumentNullException"></exception>
         public static int[] GetSignature(int[,] adjacencyMatrix)
         {
             if (adjacencyMatrix == null)
@@ -875,6 +1126,13 @@ namespace HyperGraphs
             return signature;
         }
         
+        /// <summary>
+        /// Конвертирует вектор сигнатуры в матрицу смежности
+        /// </summary>
+        /// <param name="signature">Вектор сигнатуры</param>
+        /// <returns>Матрица смежности</returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentException"></exception>
         public static int[,] SignatureToAdjacencyMatrix(int[] signature)
         {
             if (signature == null)
@@ -902,6 +1160,12 @@ namespace HyperGraphs
             return adjacencyMatrix;
         }
         
+        /// <summary>
+        /// Конвертирует список баз в сигнатуру
+        /// </summary>
+        /// <param name="baseList">Список баз</param>
+        /// <returns>Вектор сигнатуры</returns>
+        /// <exception cref="ArgumentNullException"></exception>
         public static int[] BaseToSignature(List<(int, int)> baseList)
         {
             if (baseList == null)
@@ -925,7 +1189,12 @@ namespace HyperGraphs
 
         #region Utility
 
-        public static void PrintGraph(in int[,] matrix)
+        /// <summary>
+        /// Формирует строку из матрицы
+        /// </summary>
+        /// <param name="matrix"></param>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static string ToString(in int[,] matrix)
         {
             if (matrix == null)
             {
@@ -935,18 +1204,31 @@ namespace HyperGraphs
             var vertices = matrix.GetLength(0);
             var edges = matrix.GetLength(1);
 
+            var result = "";
+            var isLine = false;
             for (int i = 0; i < vertices; i++)
             {
+                if (isLine) result += "\n";
+                var isSpace = false;
                 for (int j = 0; j < edges; j++)
                 {
-                    Console.Write($"{matrix[i, j]} ");
+                    if (isSpace) result += " ";
+                    result += $"{matrix[i, j]}";
+                    isSpace = true;
                 }
 
-                Console.WriteLine();
+                isLine = true;
             }
+
+            return result;
         }
 
-        public static void PrintVector(in int[] matrix)
+        /// <summary>
+        /// Формирует строку из вектора
+        /// </summary>
+        /// <param name="matrix"></param>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static string ToString(in int[] matrix)
         {
             if (matrix == null)
             {
@@ -954,27 +1236,41 @@ namespace HyperGraphs
             }
 
             var vertices = matrix.GetLength(0);
+            var result = "";
+            var space = false;
             for (int i = 0; i < vertices; i++)
             {
-                Console.Write($"{matrix[i]} ");
+                if (space) result += " ";
+                result += $"{matrix[i]}";
+                space = true;
             }
 
-            Console.WriteLine();
+            return result;
         }
 
-        public static void PrintList<T>(in List<T> list)
+        /// <summary>
+        /// Формирует строку из списка
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list"></param>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static string ToString<T>(in List<T> list)
         {
             if (list == null)
             {
                 throw new ArgumentNullException(nameof(list));
             }
 
+            var result = "";
+            var space = false;
             for (int i = 0; i < list.Count; i++)
             {
-                Console.Write($"{list[i]} ");
+                if (space) result += " ";
+                result += $"{list[i]}";
+                space = true;
             }
 
-            Console.WriteLine();
+            return result;
         }
 
         #endregion
