@@ -1089,43 +1089,49 @@ namespace HyperGraphs
 
             return bases;
         }
-        
+
         /// <summary>
         /// Получает вектор сигнатуры из матрицы смежности
         /// </summary>
         /// <param name="adjacencyMatrix">Матрица смежности</param>
         /// <returns>Вектор сигнатуры</returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public static int[] GetSignature(int[,] adjacencyMatrix)
+        public static long GetSignature(int[,] adjacencyMatrix)
         {
-            if (adjacencyMatrix == null)
-            {
-                throw new ArgumentNullException(nameof(adjacencyMatrix));
-            }
+            int rowCount = adjacencyMatrix.GetLength(0);
+            int colCount = adjacencyMatrix.GetLength(1);
+            int i = 0, j = colCount - 1;
+            long signature = 0;
 
-            var vertices = adjacencyMatrix.GetLength(0);
-            var signature = new int[vertices * vertices];
-            
-            if (!CheckAdjacencyGraphical(adjacencyMatrix))
+            while (i < j)
             {
-                return signature;
-            }
-    
-            for (int i = 0; i < vertices; ++i)
-            {
-                for (int j = 0; j < vertices; ++j)
+                bool zeroFound = false;
+                for (int k = 0; k < colCount; k++)
                 {
-                    if (adjacencyMatrix[i, j] == 1)
+                    if (adjacencyMatrix[i, k] == 0 && i != k)
                     {
-                        int index = i * vertices + j;
-                        signature[index] = 1;
+                        zeroFound = true;
+                    }
+                    else if (zeroFound && adjacencyMatrix[i, k] == 1)
+                    {
+                        return -1;
                     }
                 }
-            }
 
+                if (adjacencyMatrix[i, j] == 1)
+                {
+                    signature = (signature << 1) | 1;
+                    i++;
+                }
+                else
+                {
+                    signature = (signature << 1);
+                    j--;
+                }
+            }
             return signature;
         }
-        
+
         /// <summary>
         /// Конвертирует вектор сигнатуры в матрицу смежности
         /// </summary>
@@ -1133,58 +1139,107 @@ namespace HyperGraphs
         /// <returns>Матрица смежности</returns>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="ArgumentException"></exception>
-        public static int[,] SignatureToAdjacencyMatrix(int[] signature)
+        public static int[,] SignatureToMatrix(long signature)
         {
-            if (signature == null)
+            // Определение размера матрицы на основе длины сигнатуры
+            int bits = (int)Math.Ceiling(Math.Log(signature + 1, 2));
+            int n = bits + 1;
+            int[,] matrix = new int[n, n];
+
+            string binaryString = Convert.ToString(signature, 2).PadLeft(bits, '0');
+
+            int i = 0, j = n - 1; // Начинаем с правого верхнего угла
+            int index = 0;
+
+            // Находим первую левую единицу в сигнатуре
+            while (index < binaryString.Length && binaryString[index] == '0')
             {
-                throw new ArgumentNullException(nameof(signature));
+                index++;
             }
 
-            var vertices = Convert.ToInt32(Math.Pow(signature.GetLength(0), (1 / 2)));
-            if (signature.GetLength(0) / vertices != vertices)
+            while (i < j && index < binaryString.Length)
             {
-                throw new ArgumentException("Signature length must be square. (64, 49, 36, ...)");
-            }
-
-            int[,] adjacencyMatrix = new int[vertices, vertices];
-    
-            for (int i = 0; i < vertices; ++i)
-            {
-                for (int j = 0; j < vertices; ++j)
+                if (binaryString[index] == '1')
                 {
-                    int index = i * vertices + j;
-                    adjacencyMatrix[i, j] = signature[index];
+                    // Устанавливаем единицы до текущей позиции
+                    for (int k = i; k <= j; k++)
+                    {
+                        matrix[i, k] = 1;
+                        matrix[k, i] = 1; // Отражаем по диагонали
+                    }
+                    i++;
                 }
+                else
+                {
+                    j--;
+                }
+                index++;
             }
-    
-            return adjacencyMatrix;
+
+            // Устанавливаем диагональные нули
+            for (int k = 0; k < n; k++)
+            {
+                matrix[k, k] = 0;
+            }
+
+            return matrix;
         }
-        
+
         /// <summary>
         /// Конвертирует список баз в сигнатуру
         /// </summary>
         /// <param name="baseList">Список баз</param>
         /// <returns>Вектор сигнатуры</returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public static int[] BaseToSignature(List<(int, int)> baseList)
+        public static long GenerateSignatureFromBases(List<(int, int)> bases)
         {
-            if (baseList == null)
+            if (bases == null || bases.Count == 0)
             {
-                throw new ArgumentNullException(nameof(baseList));
+                throw new ArgumentException("Bases cannot be null or empty.");
             }
 
-            var vertices = baseList.Count;
-            var signature = new int[vertices * vertices];
-
-            foreach (var (row, col) in baseList)
+            // Определение размера матрицы на основе наибольшего индекса в базах
+            int n = 0;
+            foreach (var (i, j) in bases)
             {
-                int index = (row - 1) * vertices + (col - 1);
-                signature[index] = 1;
+                n = Math.Max(n, Math.Max(i, j));
+            }
+            n += 1; // так как индексы нулевые
+
+            // Построение матрицы смежности
+            int[,] matrix = new int[n, n];
+            foreach (var (i, j) in bases)
+            {
+                matrix[i, j] = 1;
+                matrix[j, i] = 1; // Отражаем по диагонали
+            }
+
+            // Установка диагональных нулей
+            for (int k = 0; k < n; k++)
+            {
+                matrix[k, k] = 0;
+            }
+
+            // Извлечение сигнатуры из матрицы
+            long signature = 0;
+            int row = 0, col = n - 1;
+            while (row < col)
+            {
+                if (matrix[row, col] == 1)
+                {
+                    signature = (signature << 1) | 1;
+                    row++;
+                }
+                else
+                {
+                    signature = (signature << 1);
+                    col--;
+                }
             }
 
             return signature;
         }
-        
+
         #endregion
 
         #region Utility
