@@ -7,11 +7,11 @@ class Program
         var errmes = string.Empty;
         var adj = new int[8, 8] {
             { 0, 1, 1, 1, 1, 1, 1, 1 },
-            { 1, 0, 1, 1, 1, 0, 1, 0 },
+            { 1, 0, 1, 1, 1, 1, 1, 0 },
             { 1, 1, 0, 1, 1, 1, 0, 0 },
             { 1, 1, 1, 0, 0, 0, 0, 0 },
             { 1, 1, 1, 0, 0, 0, 0, 0 },
-            { 1, 0, 1, 0, 0, 0, 0, 0 },
+            { 1, 1, 1, 0, 0, 0, 0, 0 },
             { 1, 1, 0, 0, 0, 0, 0, 0 },
             { 1, 0, 0, 0, 0, 0, 0, 0 }};
 
@@ -57,17 +57,19 @@ class Program
 
         if (Graph.TryGetSignature(adjacencyMatrix, out var bba, out errmes))
         {
-            Console.WriteLine(Graph.ToString(bba));
+            Console.WriteLine(bba);
             Console.WriteLine("Error Message: " + (errmes != string.Empty ? errmes : "None"));
         }
 
         Console.WriteLine();
 
-        if (Graph.TryGetBases(adjacencyMatrix, out var bbc, out errmes))
+        if (Graph.TryGetBases(adjacencyMatrix, out var bbc, out errmes, extreme: false))
         {
             Console.WriteLine(Graph.ToString(bbc));
             Console.WriteLine("Error Message: " + (errmes != string.Empty ? errmes : "None"));
         }
+
+
 
         Console.ReadLine();
     }

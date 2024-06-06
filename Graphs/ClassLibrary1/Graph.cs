@@ -636,9 +636,9 @@ namespace HyperGraphs
         /// Пытается получить сигнатуру из матрицы смежности с возвратом успеха конвертации
         /// </summary>
         /// <param name="adjacencyMatrix">Матрица смежности</param>
-        /// <param name="signature">Передаваемый вектор сигнатуры</param>
+        /// <param name="signature">Передаваемая сигнатура</param>
         /// <returns></returns>
-        public static bool TryGetSignature(int[,] adjacencyMatrix, out int[] signature)
+        public static bool TryGetSignature(int[,] adjacencyMatrix, out long signature)
         {
             return TryGetSignature(adjacencyMatrix, out signature, out _);
         }
@@ -647,48 +647,62 @@ namespace HyperGraphs
         /// Пытается получить сигнатуру из матрицы смежности с возвратом успеха конвертации
         /// </summary>
         /// <param name="adjacencyMatrix">Матрица смежности</param>
-        /// <param name="signature">Передаваемый вектор сигнатуры</param>
+        /// <param name="signature">Передаваемая сигнатура</param>
         /// <param name="errmes">Передаваемое сообщеие об ошибке конвертации</param>
         /// <returns></returns>
-        public static bool TryGetSignature(int[,] adjacencyMatrix, out int[] signature, out string errmes)
+        public static bool TryGetSignature(int[,] adjacencyMatrix, out long signature, out string errmes)
         {
             if (adjacencyMatrix == null)
             {
-                signature = new int[0];
+                signature = -1;
                 errmes = $"{nameof(adjacencyMatrix)} is null!";
                 return false;
             }
 
-            var vertices = adjacencyMatrix.GetLength(0);
-            signature = new int[vertices * vertices];
+            int rowCount = adjacencyMatrix.GetLength(0);
+            int colCount = adjacencyMatrix.GetLength(1);
+            int i = 0, j = colCount - 1;
+            signature = 0;
 
-            if (!CheckAdjacencyGraphical(adjacencyMatrix, out errmes))
+            while (i < j)
             {
-                return false;
-            }
-
-            for (int i = 0; i < vertices; ++i)
-            {
-                for (int j = 0; j < vertices; ++j)
+                bool zeroFound = false;
+                for (int k = 0; k < colCount; k++)
                 {
-                    if (adjacencyMatrix[i, j] == 1)
+                    if (adjacencyMatrix[i, k] == 0 && i != k)
                     {
-                        int index = i * vertices + j;
-                        signature[index] = 1;
+                        zeroFound = true;
                     }
+                    else if (zeroFound && adjacencyMatrix[i, k] == 1)
+                    {
+                        errmes = $"{nameof(adjacencyMatrix)} is not extreme!";
+                        return false;
+                    }
+                }
+
+                if (adjacencyMatrix[i, j] == 1)
+                {
+                    signature = (signature << 1) | 1;
+                    i++;
+                }
+                else
+                {
+                    signature = (signature << 1);
+                    j--;
                 }
             }
 
+            errmes = "";
             return true;
         }
 
         /// <summary>
         /// Пытается получить матрицу смежности из сигнатуры с возвратом успеха конвертации
         /// </summary>
-        /// <param name="signature">Вектора сигнатуры</param>
+        /// <param name="signature">Сигнатура</param>
         /// <param name="adjacencyMatrix">Передавемая матрица смежности</param>
         /// <returns></returns>
-        public static bool TrySignatureToAdjacencyMatrix(int[] signature, out int[,] adjacencyMatrix)
+        public static bool TrySignatureToAdjacencyMatrix(long signature, out int[,] adjacencyMatrix)
         {
             return TrySignatureToAdjacencyMatrix(signature, out adjacencyMatrix, out _);
         }
@@ -696,36 +710,47 @@ namespace HyperGraphs
         /// <summary>
         /// Пытается получить матрицу смежности из сигнатуры с возвратом успеха конвертации
         /// </summary>
-        /// <param name="signature">Вектора сигнатуры</param>
+        /// <param name="signature">Cигнатура</param>
         /// <param name="adjacencyMatrix">Передавемая матрица смежности</param>
         /// <param name="errmes">Передаваемое сообщение об ошибке конвертации</param>
         /// <returns></returns>
-        public static bool TrySignatureToAdjacencyMatrix(int[] signature, out int[,] adjacencyMatrix, out string errmes)
+        public static bool TrySignatureToAdjacencyMatrix(long signature, out int[,] adjacencyMatrix, out string errmes)
         {
-            if (signature == null)
+            int bits = (int)Math.Ceiling(Math.Log(signature + 1, 2));
+            int n = bits + 1;
+            adjacencyMatrix = new int[n, n];
+
+            string binaryString = Convert.ToString(signature, 2).PadLeft(bits, '0');
+
+            int i = 0, j = n - 1;
+            int index = 0;
+
+            while (index < binaryString.Length && binaryString[index] == '0')
             {
-                adjacencyMatrix = new int[0, 0];
-                errmes = $"{nameof(signature)} is null!";
-                return false;
+                index++;
             }
 
-            var vertices = Convert.ToInt32(Math.Pow(signature.GetLength(0), (1 / 2)));
-            if (signature.GetLength(0) / vertices != vertices)
+            while (i < j && index < binaryString.Length)
             {
-                adjacencyMatrix = new int[0, 0];
-                errmes = "Signature length must be square. (64, 49, 36, ...)";
-                return false;
-            }
-
-            adjacencyMatrix = new int[vertices, vertices];
-
-            for (int i = 0; i < vertices; ++i)
-            {
-                for (int j = 0; j < vertices; ++j)
+                if (binaryString[index] == '1')
                 {
-                    int index = i * vertices + j;
-                    adjacencyMatrix[i, j] = signature[index];
+                    for (int k = i; k <= j; k++)
+                    {
+                        adjacencyMatrix[i, k] = 1;
+                        adjacencyMatrix[k, i] = 1;
+                    }
+                    i++;
                 }
+                else
+                {
+                    j--;
+                }
+                index++;
+            }
+
+            for (int k = 0; k < n; k++)
+            {
+                adjacencyMatrix[k, k] = 0;
             }
 
             errmes = "";
@@ -738,7 +763,7 @@ namespace HyperGraphs
         /// <param name="baseList">Список баз</param>
         /// <param name="signature">Передаваемый вектор сигнатуры</param>
         /// <returns></returns>
-        public static bool TryBaseToSignature(List<(int, int)> baseList, out int[] signature)
+        public static bool TryBaseToSignature(List<(int, int)> baseList, out long signature)
         {
             return TryBaseToSignature(baseList, out signature, out _);
         }
@@ -746,26 +771,54 @@ namespace HyperGraphs
         /// <summary>
         /// Пытается получить сигнатуры из списка баз с возвратом успеха конвертации
         /// </summary>
-        /// <param name="baseList">Список баз</param>
+        /// <param name="bases">Список баз</param>
         /// <param name="signature">Передаваемый вектор сигнатуры</param>
         /// <param name="errmes">Передаваемое сообщение об ошибке конвертации</param>
         /// <returns></returns>
-        public static bool TryBaseToSignature(List<(int, int)> baseList, out int[] signature, out string errmes)
+        public static bool TryBaseToSignature(List<(int, int)> bases, out long signature, out string errmes)
         {
-            if (baseList == null)
+            if (bases == null)
             {
-                signature = new int[0];
-                errmes = $"{nameof(baseList)} is null!";
+                signature = -1;
+                errmes = $"{nameof(bases)} is null!";
                 return false;
             }
 
-            var vertices = baseList.Count;
-            signature = new int[vertices * vertices];
-
-            foreach (var (row, col) in baseList)
+            int n = 0;
+            foreach (var (i, j) in bases)
             {
-                int index = (row - 1) * vertices + (col - 1);
-                signature[index] = 1;
+                n = Math.Max(n, Math.Max(i, j));
+            }
+            n += 1; // так как индексы нулевые
+
+            // Построение матрицы смежности
+            int[,] matrix = new int[n, n];
+            foreach (var (i, j) in bases)
+            {
+                matrix[i, j] = 1;
+                matrix[j, i] = 1; // Отражаем по диагонали
+            }
+
+            // Установка диагональных нулей
+            for (int k = 0; k < n; k++)
+            {
+                matrix[k, k] = 0;
+            }
+
+            signature = 0;
+            int row = 0, col = n - 1;
+            while (row < col)
+            {
+                if (matrix[row, col] == 1)
+                {
+                    signature = (signature << 1) | 1;
+                    row++;
+                }
+                else
+                {
+                    signature = (signature << 1);
+                    col--;
+                }
             }
 
             errmes = "";
@@ -1139,7 +1192,7 @@ namespace HyperGraphs
         /// <returns>Матрица смежности</returns>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="ArgumentException"></exception>
-        public static int[,] SignatureToMatrix(long signature)
+        public static int[,] SignatureToAdjacency(long signature)
         {
             // Определение размера матрицы на основе длины сигнатуры
             int bits = (int)Math.Ceiling(Math.Log(signature + 1, 2));
@@ -1191,7 +1244,7 @@ namespace HyperGraphs
         /// <param name="baseList">Список баз</param>
         /// <returns>Вектор сигнатуры</returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public static long GenerateSignatureFromBases(List<(int, int)> bases)
+        public static long BasesToSignature(List<(int, int)> bases)
         {
             if (bases == null || bases.Count == 0)
             {
@@ -1330,6 +1383,4 @@ namespace HyperGraphs
 
         #endregion
     }
-
-
 }
